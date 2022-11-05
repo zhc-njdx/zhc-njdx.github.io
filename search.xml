@@ -4,6 +4,32 @@
   
     
     <entry>
+      <title>lab3</title>
+      <link href="/2022/11/06/lab3/"/>
+      <url>/2022/11/06/lab3/</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>ECMAScript</title>
+      <link href="/2022/11/05/ECMAScript/"/>
+      <url>/2022/11/05/ECMAScript/</url>
+      
+        <content type="html"><![CDATA[<h1 id="ECMAScript"><a href="#ECMAScript" class="headerlink" title="ECMAScript"></a>ECMAScript</h1><h2 id="1-概述"><a href="#1-概述" class="headerlink" title="1 概述"></a>1 概述</h2><p>ECMA是一个组织，制定了一些标准，然后JS去实现这些标准。</p><p>ES2015兼容性：IE10+、Chrome、FireFox、移动端、NodeJS</p><p>由于兼容性问题，对于一些版本较低的设备，就需要使用一些方法使得ES6的代码可以运行起来</p><p>1、浏览器打开页面时，对ES6代码进行转换。</p><p>2、先将ES6代码编译为可以被低版本设备接收的代码，再拿去执行。</p>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Hello World</title>
       <link href="/2022/09/22/hello-world/"/>
       <url>/2022/09/22/hello-world/</url>

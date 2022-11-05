@@ -9,8 +9,45 @@
     <atom:link href="http://example.com/rss2.xml" rel="self" type="application/rss+xml"/>
     
     <description></description>
-    <pubDate>Wed, 19 Oct 2022 00:46:25 GMT</pubDate>
+    <pubDate>Sat, 05 Nov 2022 16:40:57 GMT</pubDate>
     <generator>http://hexo.io/</generator>
+    
+    <item>
+      <title>lab3</title>
+      <link>http://example.com/2022/11/06/lab3/</link>
+      <guid>http://example.com/2022/11/06/lab3/</guid>
+      <pubDate>Sat, 05 Nov 2022 16:40:57 GMT</pubDate>
+      
+      
+      
+      
+      
+      
+      <comments>http://example.com/2022/11/06/lab3/#disqus_thread</comments>
+      
+    </item>
+    
+    <item>
+      <title>ECMAScript</title>
+      <link>http://example.com/2022/11/05/ECMAScript/</link>
+      <guid>http://example.com/2022/11/05/ECMAScript/</guid>
+      <pubDate>Sat, 05 Nov 2022 08:13:01 GMT</pubDate>
+      
+        
+        
+      <description>&lt;h1 id=&quot;ECMAScript&quot;&gt;&lt;a href=&quot;#ECMAScript&quot; class=&quot;headerlink&quot; title=&quot;ECMAScript&quot;&gt;&lt;/a&gt;ECMAScript&lt;/h1&gt;&lt;h2 id=&quot;1-概述&quot;&gt;&lt;a href=&quot;#1-概述&quot; class=&quot;head</description>
+        
+      
+      
+      
+      <content:encoded><![CDATA[<h1 id="ECMAScript"><a href="#ECMAScript" class="headerlink" title="ECMAScript"></a>ECMAScript</h1><h2 id="1-概述"><a href="#1-概述" class="headerlink" title="1 概述"></a>1 概述</h2><p>ECMA是一个组织，制定了一些标准，然后JS去实现这些标准。</p><p>ES2015兼容性：IE10+、Chrome、FireFox、移动端、NodeJS</p><p>由于兼容性问题，对于一些版本较低的设备，就需要使用一些方法使得ES6的代码可以运行起来</p><p>1、浏览器打开页面时，对ES6代码进行转换。</p><p>2、先将ES6代码编译为可以被低版本设备接收的代码，再拿去执行。</p>]]></content:encoded>
+      
+      
+      
+      
+      <comments>http://example.com/2022/11/05/ECMAScript/#disqus_thread</comments>
+      
+    </item>
     
     <item>
       <title>Hello World</title>

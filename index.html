@@ -191,7 +191,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/09/22/hello-world/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/11/10/compilation-principle-lab1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -205,31 +205,30 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/09/22/hello-world/" class="post-title-link" itemprop="url">Hello World</a>
+            <a href="/2022/11/10/compilation-principle-lab1/" class="post-title-link" itemprop="url">编译原理 Lab1</a>
         </h2>
 
         <div class="post-meta">
 
-        
-          <i class="fa fa-thumb-tack"></i>
-          <font color=7D26CD>置顶</font>
-          <span class="post-meta-divider">|</span>
         
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2022-09-22 15:39:36" itemprop="dateCreated datePublished" datetime="2022-09-22T15:39:36+08:00">2022-09-22</time>
+              <time title="创建时间：2022-11-10 00:00:00 / 修改时间：11:23:49" itemprop="dateCreated datePublished" datetime="2022-11-10T00:00:00+08:00">2022-11-10</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-10-19 08:46:25" itemprop="dateModified" datetime="2022-10-19T08:46:25+08:00">2022-10-19</time>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
               </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">编译原理</span></a>
+                </span>
+            </span>
 
           <br>
             <span class="post-meta-item" title="本文字数">
@@ -237,7 +236,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>375</span>
+              <span>527</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -256,21 +255,115 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+          <h2 id="一、实验思路"><a href="#一、实验思路" class="headerlink" title="一、实验思路"></a>一、实验思路</h2><p>本次实验主要是写词法分析器，对语法没有要求，所以在<code>.g4</code>文件中只要写对应的词法即可。</p>
+<p><img src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221110105750227.png" alt="image-20221110105750227"></p>
+<p>然后是在<code>Main</code>函数中处理逻辑，相应的代码在手册中都已给出，主要需要实现是</p>
+<ol>
+<li>自己的<code>MyErrorListener</code></li>
+<li>处理<code>tokens</code>的输出</li>
+</ol>
+<h3 id="MyErrorListener"><a href="#MyErrorListener" class="headerlink" title="MyErrorListener"></a><code>MyErrorListener</code></h3><p>首先需要知道代码是如何调用这个类的，所以我在实现的时候先将<code>BaseErrorListener</code>中的函数全部拷贝到<code>MyErrorListener</code>中，然后对每个函数增加一个<code>System.out.println(...)</code>，这样就可以知道在出现错误是会调用哪一个函数，最后发现是<code>syntaxError</code>函数，然后就可以去<code>Lexer</code>类中找到对应调用位置，查看是如何调用这个函数，最后编写这个函数。</p>
+<p><img src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221110110552598.png" alt="image-20221110110552598"></p>
+<h3 id="tokens输出"><a href="#tokens输出" class="headerlink" title="tokens输出"></a><code>tokens</code>输出</h3><p>首先确定<code>getAllTokens</code>函数返回的类型&#x3D;&gt;<code>List&lt;? extends Token&gt;</code></p>
+<p>在遍历<code>token</code>列表时调用<code>Token</code>类中对应函数来获取行号、类型等相关信息，再做输出。</p>
+<blockquote>
+<p>注意：出现错误时，只输出错误信息。</p>
+</blockquote>
+<p><img src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221110110925468.png" alt="image-20221110110925468"></p>
+<h2 id="二、碰到的问题"><a href="#二、碰到的问题" class="headerlink" title="二、碰到的问题"></a>二、碰到的问题</h2><h3 id="1、输出格式"><a href="#1、输出格式" class="headerlink" title="1、输出格式"></a>1、输出格式</h3><p>注意输出格式要严格按照手册要求。</p>
+<h3 id="2、INTEGR-CONST的处理"><a href="#2、INTEGR-CONST的处理" class="headerlink" title="2、INTEGR_CONST的处理"></a>2、<code>INTEGR_CONST</code>的处理</h3><p>注意八进制数和十六进制数的处理，输出<code>token</code>时是需要输出其十进制值。</p>
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+      
+    </div>
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+    
+    
+    
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+      
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-<h3 id="A-Picture"><a href="#A-Picture" class="headerlink" title="A Picture"></a>A Picture</h3><p><img src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/imgs/QQ%E5%9B%BE%E7%89%8720200731164308.jpg" alt="image-20221018133542000"></p>
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/11/08/JavaScript%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/">
 
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="zhc">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ICDE">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/11/08/JavaScript%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/" class="post-title-link" itemprop="url">JavaScript异步编程</a>
+        </h2>
+
+        <div class="post-meta">
+
+        
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-08 23:21:03" itemprop="dateCreated datePublished" datetime="2022-11-08T23:21:03+08:00">2022-11-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-09 00:39:49" itemprop="dateModified" datetime="2022-11-09T00:39:49+08:00">2022-11-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%A4%A7%E5%89%8D%E7%AB%AF%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">大前端学习</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2>
       
     </div>
 
@@ -681,10 +774,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2022-11-06 09:45:00 / 修改时间：09:46:30" itemprop="dateCreated datePublished" datetime="2022-11-06T09:45:00+08:00">2022-11-06</time>
+              <time title="创建时间：2022-11-06 09:45:00" itemprop="dateCreated datePublished" datetime="2022-11-06T09:45:00+08:00">2022-11-06</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-09 16:47:31" itemprop="dateModified" datetime="2022-11-09T16:47:31+08:00">2022-11-09</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -701,7 +800,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.2k</span>
+              <span>2.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -720,7 +819,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="动态规划应用"><a href="#动态规划应用" class="headerlink" title="动态规划应用"></a>动态规划应用</h1><h2 id="一、股票问题"><a href="#一、股票问题" class="headerlink" title="一、股票问题(*)"></a>一、股票问题(*)</h2><blockquote>
+          <h2 id="一、股票问题"><a href="#一、股票问题" class="headerlink" title="一、股票问题(*)"></a>一、股票问题(*)</h2><blockquote>
 <p> <a target="_blank" rel="noopener" href="https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-iv/">188. 买卖股票的最佳时机 IV</a></p>
 <p>给定一个整数数组 prices ，它的第 i 个元素 prices[i] 是一支给定的股票在第 i 天的价格。</p>
 <p>设计一个算法来计算你所能获取的最大利润。你最多可以完成 k 笔交易。</p>
@@ -778,6 +877,14 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dp[i][j] = <span class="number">1</span> + dp[i-<span class="number">1</span>][j-<span class="number">1</span>] + dp[i][j-<span class="number">1</span>];</span><br></pre></td></tr></table></figure>
 
 <p>这里应该是这道题最难理解的地方。</p>
+<h2 id="五、自由之路"><a href="#五、自由之路" class="headerlink" title="五、自由之路"></a>五、自由之路</h2><blockquote>
+<p> <a target="_blank" rel="noopener" href="https://leetcode.cn/problems/freedom-trail/">514. 自由之路</a><img src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221109163239286.png" alt="image-20221109163239286"></p>
+</blockquote>
+<p>这道题一眼看去和普通的动态规划没什么区别，<strong>给定两个字符串，求某个最值</strong>。</p>
+<p>但是这道题中的<code>ring</code>是<u>“环形”</u>的；而且状态转移不是和往常一样，不断从局部最优走向全局最优，而是有点像回溯那样，需要走完后面的才能知道前面这一步走的对不对。</p>
+<h2 id="六、K-站中转内最便宜的航班"><a href="#六、K-站中转内最便宜的航班" class="headerlink" title="六、K 站中转内最便宜的航班"></a>六、K 站中转内最便宜的航班</h2><blockquote>
+<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/cheapest-flights-within-k-stops/">787.K 站中转内最便宜的航班</a></p>
+</blockquote>
 
       
     </div>
@@ -927,7 +1034,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-08 00:28:44" itemprop="dateModified" datetime="2022-11-08T00:28:44+08:00">2022-11-08</time>
+                <time title="修改时间：2022-11-08 22:59:30" itemprop="dateModified" datetime="2022-11-08T22:59:30+08:00">2022-11-08</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -945,7 +1052,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.1k</span>
+              <span>1.3k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -989,6 +1096,9 @@
 <li><code>const</code>声明常量，不能修改</li>
 <li><code>let</code>和<code>const</code>都是块级作用域，要解决上面的问题，只要将<code>for(var i...)</code>改成<code>for(let i...)</code>即可。</li>
 </ol>
+<h2 id="3-解构赋值"><a href="#3-解构赋值" class="headerlink" title="3 解构赋值"></a>3 解构赋值</h2><p>解构赋值是对赋值操作符的扩展，从字面意思上理解，就是把复杂对象拆分开给其他变量赋值。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> [a, b, c] = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]; <span class="comment">// a=1, b=2, c=3</span></span><br><span class="line"><span class="keyword">let</span> [a, ...b] = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]; <span class="comment">// a=1, b=[2,3]</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> &#123;x, y, z&#125; = &#123;<span class="attr">x</span>:<span class="string">&quot;x&quot;</span>, <span class="attr">y</span>:<span class="string">&quot;y&quot;</span>, <span class="attr">z</span>:<span class="string">&quot;z&quot;</span>&#125;; <span class="comment">// x=&quot;x&quot;, y=&quot;y&quot;, z=&quot;z&quot;</span></span><br></pre></td></tr></table></figure>
+
 
       
     </div>
@@ -1074,20 +1184,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-count">8</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1143,14 +1253,14 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">12 分钟</span>
+    <span title="站点阅读时长">13 分钟</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
   </div>
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共4.8k字</span>
+  <span class="post-count">博客全站共5.3k字</span>
 </div>
 
 

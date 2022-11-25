@@ -195,6 +195,124 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/11/24/compilation-principle-lab2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="zhc">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ICDE">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/11/24/compilation-principle-lab2/" class="post-title-link" itemprop="url">编译原理-Lab2</a>
+        </h2>
+
+        <div class="post-meta">
+
+        
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-11-24 00:00:00" itemprop="dateCreated datePublished" datetime="2022-11-24T00:00:00+08:00">2022-11-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-25 10:15:29" itemprop="dateModified" datetime="2022-11-25T10:15:29+08:00">2022-11-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">编译原理</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p><a
+target="_blank" rel="noopener" href="http://47.122.3.40:8081/#/lab2-parser/lab2-parser">实验内容</a>：编写SysY语言的语法分析器，并实现高亮。</p>
+</blockquote>
+<h2 id="实验思路">实验思路</h2>
+<p>首先需要根据<a
+target="_blank" rel="noopener" href="https://github.com/courses-at-nju-by-hfwei/compilers-lab-docs/raw/main/docs/docs/SysY%E8%AF%AD%E8%A8%80%E5%AE%9A%E4%B9%89.pdf">SysY语言定义</a>编写Parser，这部分基本上就是将手册上的语法规则改写成<code>Antrl</code>语句即可。</p>
+<p>然后就可以到<code>Main</code>类中编写相应的逻辑：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="keyword">if</span>(args.length == <span class="number">0</span>)&#123;</span><br><span class="line">            System.err.println(<span class="string">&quot;input path is required&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// get input file and generate the Lexer</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">source</span> <span class="operator">=</span> args[<span class="number">0</span>];</span><br><span class="line">        <span class="type">CharStream</span> <span class="variable">input</span> <span class="operator">=</span> CharStreams.fromFileName(source);</span><br><span class="line">        <span class="type">SysYLexer</span> <span class="variable">sysYLexer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SysYLexer</span>(input);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// generate the Parser</span></span><br><span class="line">        <span class="type">CommonTokenStream</span> <span class="variable">tokens</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CommonTokenStream</span>(sysYLexer);</span><br><span class="line">        <span class="type">SysYParser</span> <span class="variable">sysYParser</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SysYParser</span>(tokens);</span><br><span class="line"></span><br><span class="line">        <span class="type">Visitor</span> <span class="variable">visitor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Visitor</span>();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// add error listener</span></span><br><span class="line">        sysYParser.removeErrorListeners();</span><br><span class="line">        <span class="type">MyParserErrorListener</span> <span class="variable">myParserErrorListener</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MyParserErrorListener</span>(visitor);</span><br><span class="line">        sysYParser.addErrorListener(myParserErrorListener);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// DFS the tree</span></span><br><span class="line">        <span class="type">ParseTree</span> <span class="variable">tree</span> <span class="operator">=</span> sysYParser.program();</span><br><span class="line">        visitor.visit(tree);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>类似于Lab1，需要实现一个自定义的<code>ErrorListener</code>，传递给<code>Parser</code>，使得在发现语法错误时执行报错输出。</p>
+<blockquote>
+<p>为什么要传递<code>Visitor</code>?</p>
+<p>由于一旦出现语法错误，就不需要打印语法树了，所以需要在<code>ErrorListener</code>监听到语法错误时让<code>Visitor</code>不要做输出。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">MyParserErrorListener</span> <span class="keyword">extends</span> <span class="title class_">BaseErrorListener</span>&#123;</span><br><span class="line">    Visitor visitor;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">MyParserErrorListener</span><span class="params">(Visitor v)</span>&#123; <span class="built_in">this</span>.visitor = v; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">syntaxError</span><span class="params">(Recognizer&lt;?, ?&gt; recognizer,</span></span><br><span class="line"><span class="params">                            Object offendingSymbol,</span></span><br><span class="line"><span class="params">                            <span class="type">int</span> line,</span></span><br><span class="line"><span class="params">                            <span class="type">int</span> charPositionInLine,</span></span><br><span class="line"><span class="params">                            String msg,</span></span><br><span class="line"><span class="params">                            RecognitionException e)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">this</span>.visitor.hasError = <span class="literal">true</span>;</span><br><span class="line">        System.err.println(<span class="string">&quot;Error type B at Line &quot;</span> + line + <span class="string">&quot;: &quot;</span> + msg);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后也是最关键的，编写继承自<code>SysYParserBaseVisitor&lt;Void&gt;</code>的<code>Visitor</code>，实现打印语法树以及高亮的功能。</p>
+<ol type="1">
+<li>如何打印节点信息：在<code>visitChildren</code>和<code>visitTerminal</code>两个函数中，调用参数<code>node</code>的相关方法就可以获得<code>type</code>、<code>text</code>等信息。</li>
+<li>如何实现缩进：存在<code>depth</code>字段，调用<code>node.getRuleContext().depth()</code>获得；注意在<code>visitTerminal</code>函数中需要强转一下类型。</li>
+<li>如何实现高亮：在<code>SysYParser</code>中找到对应的存放节点类型的数组，将数组中的值修改为对应的颜色值，每次根据<code>type</code>获取对应颜色。</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Visitor</span> <span class="keyword">extends</span> <span class="title class_">SysYParserBaseVisitor</span>&lt;Void&gt;&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="variable">hasError</span> <span class="operator">=</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String <span class="title function_">getColor</span><span class="params">(<span class="type">int</span> type)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (type &lt; <span class="number">0</span> || type &gt;= _COLOR_NAMES.length) <span class="keyword">return</span> <span class="string">&quot;&quot;</span>;</span><br><span class="line">        <span class="keyword">return</span> _COLOR_NAMES[type];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String[] _COLOR_NAMES = &#123;</span><br><span class="line">            <span class="literal">null</span>, <span class="string">&quot;[orange]&quot;</span>, <span class="string">&quot;[orange]&quot;</span>, <span class="string">&quot;[orange]&quot;</span>, <span class="string">&quot;[orange]&quot;</span>, <span class="string">&quot;[orange]&quot;</span>, <span class="string">&quot;[orange]&quot;</span>, <span class="string">&quot;[orange]&quot;</span>, <span class="string">&quot;[orange]&quot;</span>,</span><br><span class="line">            <span class="string">&quot;[orange]&quot;</span>, <span class="string">&quot;[blue]&quot;</span>, <span class="string">&quot;[blue]&quot;</span>, <span class="string">&quot;[blue]&quot;</span>, <span class="string">&quot;[blue]&quot;</span>, <span class="string">&quot;[blue]&quot;</span>, <span class="string">&quot;[blue]&quot;</span>, <span class="string">&quot;[blue]&quot;</span>, <span class="string">&quot;[blue]&quot;</span>,</span><br><span class="line">            <span class="string">&quot;[blue]&quot;</span>, <span class="string">&quot;[blue]&quot;</span>, <span class="string">&quot;[blue]&quot;</span>, <span class="string">&quot;[blue]&quot;</span>, <span class="string">&quot;[blue]&quot;</span>, <span class="string">&quot;[blue]&quot;</span>, <span class="string">&quot;[blue]&quot;</span>, <span class="string">&quot;&quot;</span>, <span class="string">&quot;&quot;</span>, <span class="string">&quot;&quot;</span>,</span><br><span class="line">            <span class="string">&quot;&quot;</span>, <span class="string">&quot;&quot;</span>, <span class="string">&quot;&quot;</span>, <span class="string">&quot;&quot;</span>, <span class="string">&quot;&quot;</span>, <span class="string">&quot;[green]&quot;</span>,</span><br><span class="line">            <span class="string">&quot;[red]&quot;</span>, <span class="string">&quot;&quot;</span>, <span class="string">&quot;&quot;</span>, <span class="string">&quot;&quot;</span></span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">printIndents</span><span class="params">(<span class="type">int</span> depth)</span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; depth * <span class="number">2</span>; i++)&#123;</span><br><span class="line">            System.err.print(<span class="string">&quot; &quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Void <span class="title function_">visitChildren</span><span class="params">(RuleNode node)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">ruleIdx</span> <span class="operator">=</span> node.getRuleContext().getRuleIndex();</span><br><span class="line">        <span class="type">String</span> <span class="variable">rule</span> <span class="operator">=</span> SysYParser.ruleNames[ruleIdx];</span><br><span class="line">        <span class="keyword">if</span> (!hasError)&#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">depth</span> <span class="operator">=</span> node.getRuleContext().depth();</span><br><span class="line">            printIndents(depth-<span class="number">1</span>); <span class="comment">// need -1: depth begin from 1</span></span><br><span class="line">            System.err.println(rule.toUpperCase().charAt(<span class="number">0</span>) + rule.substring(<span class="number">1</span>));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">super</span>.visitChildren(node);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Void <span class="title function_">visitTerminal</span><span class="params">(TerminalNode node)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">type</span> <span class="operator">=</span> node.getSymbol().getType(); <span class="comment">// node type</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">color</span> <span class="operator">=</span> getColor(type);</span><br><span class="line">        <span class="keyword">if</span> (!hasError &amp;&amp; !color.equals(<span class="string">&quot;&quot;</span>))&#123; <span class="comment">// &quot;&quot; means the terminal node we need, such as &#x27;&#123;&#x27; &#x27;&#125;&#x27;</span></span><br><span class="line">            <span class="type">String</span> <span class="variable">literal_name</span> <span class="operator">=</span> node.toString();</span><br><span class="line">            <span class="type">String</span> <span class="variable">symbol_name</span> <span class="operator">=</span> SysYParser.VOCABULARY.getSymbolicName(type);</span><br><span class="line">            <span class="comment">// deal with numbers</span></span><br><span class="line">            <span class="keyword">if</span> (type == SysYParser.INTEGR_CONST)&#123;</span><br><span class="line">                literal_name = convert_to_dec(literal_name);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="type">int</span> <span class="variable">depth</span> <span class="operator">=</span> ((RuleNode)node.getParent()).getRuleContext().depth(); <span class="comment">// the depth in parser tree</span></span><br><span class="line">            printIndents(depth);</span><br><span class="line">            System.err.println(literal_name + <span class="string">&quot; &quot;</span> + symbol_name + color);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> String <span class="title function_">convert_to_dec</span><span class="params">(String number)</span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (number.equals(<span class="string">&quot;0&quot;</span>))&#123;</span><br><span class="line">            number = <span class="string">&quot;0&quot;</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (number.startsWith(<span class="string">&quot;0x&quot;</span>) || number.startsWith(<span class="string">&quot;0X&quot;</span>))&#123;</span><br><span class="line">            number = Integer.parseInt(number.substring(<span class="number">2</span>), <span class="number">16</span>) + <span class="string">&quot;&quot;</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (number.startsWith(<span class="string">&quot;0&quot;</span>))&#123;</span><br><span class="line">            number = Integer.parseInt(number.substring(<span class="number">1</span>), <span class="number">8</span>) + <span class="string">&quot;&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> number;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="碰到的问题">碰到的问题</h2>
+<h3 id="缩进">缩进</h3>
+<p>如何按层次缩进是做实验的时候碰到的最大的一个问题。一开始没想到会有<code>depth</code>字段，一直在想如何通过一个变量来标记层次，结果一直没有成功，因为两个<code>visit</code>函数都是进入节点之前调用，而没有对应的离开后调用的函数，所以不能通过在两个函数内的增减变化实现层次的变化（也许<code>Listener</code>应该是可以的）</p>
+<h3 id="拼写">拼写</h3>
+<p><code>INTEGR_CONST</code>。测试的时候看它输出在文件里报拼写错误，还以为是自己写错了，全部改成<code>INTEGER_CONST</code>，结果<code>OJ</code>过不了，后来发现在<code>Lab1</code>的<code>Lexer</code>中写的就是<code>INTEGR_CONST</code>。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+      
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2022/11/15/%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B010%EF%BC%88%E5%85%B6%E4%BB%96%E7%BB%8F%E5%85%B8%E7%AE%97%E6%B3%95%EF%BC%89/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -464,7 +582,7 @@ src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-20 00:09:45" itemprop="dateModified" datetime="2022-11-20T00:09:45+08:00">2022-11-20</time>
+                <time title="修改时间：2022-11-21 16:08:03" itemprop="dateModified" datetime="2022-11-21T16:08:03+08:00">2022-11-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -532,14 +650,11 @@ src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-
 <p>元组类型表示 <u>已知数量和类型</u> 的数组，各元素的类型
 <u>不必相同</u></p>
 <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> x : [<span class="built_in">string</span>, <span class="built_in">number</span>] = [<span class="string">&#x27;typescript&#x27;</span>, <span class="number">10</span>];</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>联合类型</p>
-</blockquote>
 <h4 id="枚举">1.6 枚举</h4>
 <p>枚举是TypeScript中多出来的，和C语言等高级语言类似，可以为一组数组赋予有意义的名字，帮助理解。</p>
 <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="title class_">Color</span> &#123;<span class="title class_">Red</span>, <span class="title class_">Green</span>, <span class="title class_">Blue</span>&#125;</span><br><span class="line"><span class="keyword">let</span> c : <span class="title class_">Color</span> = <span class="title class_">Color</span>.<span class="property">Red</span>;</span><br></pre></td></tr></table></figure>
 <p>可以通过枚举值得到其名字</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="title class_">Color</span> &#123;<span class="title class_">Red</span> = <span class="number">1</span>, <span class="title class_">Green</span>, <span class="title class_">Blue</span>&#125;</span><br><span class="line"><span class="keyword">let</span> green_name : <span class="built_in">string</span> = <span class="title class_">Color</span>[<span class="number">2</span>];</span><br></pre></td></tr></table></figure>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="title class_">Color</span> &#123;<span class="title class_">Red</span> = <span class="number">1</span>, <span class="title class_">Green</span>, <span class="title class_">Blue</span>&#125;</span><br><span class="line"><span class="keyword">let</span> green_name : <span class="built_in">string</span> = <span class="title class_">Color</span>[<span class="number">2</span>]; <span class="comment">// &quot;Green&quot;</span></span><br></pre></td></tr></table></figure>
 <h4 id="任意值">1.7 任意值</h4>
 <p>任意值(any)其实就像是JavaScript中的变量一样，可以被赋予任何类型的值，编译器不会进行检查。</p>
 <p>对于Object类型的变量，你可以赋任何值，但是不能任意调用方法，即便它真的有这些方法。</p>
@@ -563,7 +678,7 @@ src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-
 <p>告诉编译器某个变量的类型</p>
 <figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> s : <span class="built_in">any</span> = <span class="string">&quot;i am a string&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 1. &lt;断言类型&gt;变量</span></span><br><span class="line"><span class="keyword">let</span> len : <span class="built_in">number</span> = (&lt;<span class="built_in">string</span>&gt;s).<span class="property">length</span>;</span><br><span class="line"><span class="comment">// 2. 变量 as 断言类型</span></span><br><span class="line"><span class="keyword">let</span> len : <span class="built_in">number</span> = (s <span class="keyword">as</span> <span class="built_in">string</span>).<span class="property">length</span>;</span><br></pre></td></tr></table></figure>
 <h3 id="变量声明">2 变量声明</h3>
-<p><code>TypeScript</code>中支持<code>let</code>和<code>const</code>，这其实在ES6就支持了，这里主要讲解了<code>let</code>和<code>var</code>的区别，详情见ES6新特性。</p>
+<p><code>TypeScript</code>中支持<code>let</code>和<code>const</code>，JS在ES6就支持了，主要是<code>let</code>和<code>var</code>的区别：主要就是<code>var</code>是函数级作用域，但是<code>let</code>是块级作用域。</p>
 <h3 id="接口">3 接口</h3>
 <p>TypeScript中最核心的原则之一就是
 <strong>类型</strong>，而接口就是为类型检查 定义契约。</p>
@@ -679,7 +794,7 @@ src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/11/10/compilation-principle-lab1/" class="post-title-link" itemprop="url">编译原理 Lab1</a>
+            <a href="/2022/11/10/compilation-principle-lab1/" class="post-title-link" itemprop="url">编译原理-Lab1</a>
         </h2>
 
         <div class="post-meta">
@@ -698,7 +813,7 @@ src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-20 00:13:17" itemprop="dateModified" datetime="2022-11-20T00:13:17+08:00">2022-11-20</time>
+                <time title="修改时间：2022-11-25 10:15:19" itemprop="dateModified" datetime="2022-11-25T10:15:19+08:00">2022-11-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -907,7 +1022,7 @@ src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-20 00:11:59" itemprop="dateModified" datetime="2022-11-20T00:11:59+08:00">2022-11-20</time>
+                <time title="修改时间：2022-11-23 17:37:31" itemprop="dateModified" datetime="2022-11-23T17:37:31+08:00">2022-11-23</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -925,7 +1040,7 @@ src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3k</span>
+              <span>3.1k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -995,11 +1110,11 @@ networks : What are they?</a></p>
 <p>上面提到了，seq2seq模型的Encoder部分将input
 sequence转换成一个vector，也叫context，Decoder根据这个context做输出预测。这样的话，这个context
 vector就成为模型性能的瓶颈了，模型输出结果的正确性取决于这个context
-vector能多好的表达input sequence。</p>
+vector能多好地表达input sequence。</p>
 <p>引入Attention机制，使得模型专注在input sequence的相关部分。</p>
 <p>Attention机制主要在两个地方做了改进</p>
 <ol type="1">
-<li><p>给Decoder部分传递<strong>所有的 hidden state</strong>，而不是
+<li><p>给Decoder部分传递<strong>所有的 hidden state</strong>，而不是一个
 context vector。</p></li>
 <li><p>在Decoder的每一步，为所有的 hidden state 打分，用 softmax
 后的分数乘上对应的 hidden state，然后加和形成<strong>这一步的 context
@@ -1024,7 +1139,7 @@ src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-
 <ol type="1">
 <li>第①个公式相当于就是上面说的打分，得到的<span
 class="math inline">\(u_{j}^{i}\)</span>表示的是在 time-step 'i'
-时，对Encoder的第j个 hidden state 的打分。</li>
+时，对Encoder的第 j 个 hidden state 的打分。</li>
 <li>第②个公式：使用 <span class="math inline">\(softmax\)</span>
 函数对打分进行处理。</li>
 <li>第③个公式：将 <span class="math inline">\(softmax\)</span> 后的分数
@@ -1058,6 +1173,12 @@ class="math inline">\(p_{gen}\)</span>结合起来的，最后形成一个总的
 <p>而<code>coverage mechanism</code>则是插入在产生<code>attention distribution</code>的步骤中，因为它是用来反映<code>source text</code>中单词在结果中的覆盖程度，通过将它加入<code>attention distribution</code>的计算中，起到一个反馈的作用，从而有效减少重复问题。（下式红框部分就是<code>coverage vector</code>作为额外输入传递给<code>attention</code>机制的计算中）</p>
 <p><img
 src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221118004630172.png" /></p>
+<p>1、Ptr是对source
+text进行选择，prompt的引入可能会对Ptr的选择产生干扰。</p>
+<p>2、prompt的重点是想要增加LM的理解能力，转换任务类型，从而产生更好的效果，而Ptr是不从output
+dictionary中产生输出，直接从input中产生输出。</p>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221123173727852.png" /></p>
 
       
     </div>
@@ -1612,211 +1733,11 @@ input.</p>
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/10/31/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E5%BA%94%E7%94%A8%E9%A2%98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="zhc">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ICDE">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/10/31/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E5%BA%94%E7%94%A8%E9%A2%98/" class="post-title-link" itemprop="url">动态规划应用</a>
-        </h2>
-
-        <div class="post-meta">
-
-        
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-10-31 00:00:00" itemprop="dateCreated datePublished" datetime="2022-10-31T00:00:00+08:00">2022-10-31</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-20 00:08:40" itemprop="dateModified" datetime="2022-11-20T00:08:40+08:00">2022-11-20</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/leetcode%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">leetcode刷题笔记</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>5.2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>5 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="一股票问题">一、股票问题(*)</h2>
-<blockquote>
-<p><a
-target="_blank" rel="noopener" href="https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-iv/">188.
-买卖股票的最佳时机 IV</a></p>
-<p>给定一个整数数组 prices ，它的第 i 个元素 prices[i]
-是一支给定的股票在第 i 天的价格。</p>
-<p>设计一个算法来计算你所能获取的最大利润。你最多可以完成 k 笔交易。</p>
-<p>注意：你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。</p>
-</blockquote>
-<p>labuladong算法秘籍中使用了【三个<strong>状态</strong>】（三维dp数组）</p>
-<ol type="1">
-<li>第几天</li>
-<li>手中是否持有股票</li>
-<li>最大交易限制（最大交易限制只在买入股票时减一）</li>
-</ol>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// dp[i][j][k] 意味着在第i天，手中持有(j=1)或不持有(j=0)股票，最大交易限制为k情况下的最大利润</span></span><br></pre></td></tr></table></figure>
-<p><strong>状态转移方程</strong></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">dp[i][<span class="number">0</span>][k] = Math.max(</span><br><span class="line">    dp[i-<span class="number">1</span>][<span class="number">0</span>][k],  <span class="comment">// 第i天 不买入不卖出: 第i-1天也没有股票，交易限制还是k</span></span><br><span class="line">    dp[i-<span class="number">1</span>][<span class="number">1</span>][k]+prices[i-<span class="number">1</span>] <span class="comment">// 第i天 卖出: 第i-1天有股票，交易限制还是k</span></span><br><span class="line">);</span><br><span class="line">dp[i][<span class="number">1</span>][k] = Math.max(</span><br><span class="line">    dp[i-<span class="number">1</span>][<span class="number">1</span>][k], <span class="comment">// 第i天 不买入不卖出: 第i-1天有股票，交易限制为k</span></span><br><span class="line">    dp[i-<span class="number">1</span>][<span class="number">0</span>][k-<span class="number">1</span>]-prices[i-<span class="number">1</span>] <span class="comment">// 第i天 买入: 第i-1天没有股票，最大交易次数不能超过k-1</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure>
-<p><strong>base case</strong></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dp[<span class="number">0</span>][<span class="number">0</span>][...] = <span class="number">0</span>; dp[<span class="number">0</span>][<span class="number">1</span>][...] = Integer.MIN_VALUE;</span><br><span class="line">dp[...][<span class="number">0</span>][<span class="number">0</span>] = <span class="number">0</span>; dp[...][<span class="number">1</span>][<span class="number">0</span>] = Integer.MIN_VALUE;</span><br></pre></td></tr></table></figure>
-<h2 id="二打劫家舍问题">二、打劫家舍问题</h2>
-<blockquote>
-<p><a
-href="%5B198.%20打家劫舍%20-%20力扣（LeetCode）%5D(https://leetcode.cn/problems/house-robber/)">198.打劫家舍</a></p>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/house-robber-ii/">213. 打家劫舍
-II</a></p>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/house-robber-iii/">337.
-打家劫舍 III</a></p>
-</blockquote>
-<h3 id="打劫家舍">1、打劫家舍</h3>
-<p>【状态】是 <u>抢劫第i家时能获得的最大金额</u></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 状态转移方程</span></span><br><span class="line">dp[i] = Math.max(dp[i-<span class="number">2</span>], dp[i-<span class="number">3</span>]) + nums[i];</span><br></pre></td></tr></table></figure>
-<h3 id="打劫家舍ⅱ">2、打劫家舍Ⅱ</h3>
-<blockquote>
-<p>特别之处在于 nums 换成了环形数组</p>
-</blockquote>
-<p>应对策略也十分巧妙</p>
-<p><span class="math inline">\(f([x_{1}, x_{2}, ... , x_{n}]) = max(
-f([x_{1}, x_{2}, ..., x_{n-1}]), f([x_{2}, ..., x_{n}]) )\)</span></p>
-<p><u><strong>既然首尾相连了，那么肯定最多只能抢劫一家，把另外一家除去</strong></u>，就把环形数组又变成了普通数组了。</p>
-<h3 id="打劫家舍ⅲ">3、打劫家舍Ⅲ</h3>
-<blockquote>
-<p>把家舍的形状变成了二叉树</p>
-</blockquote>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">rob</span><span class="params">(TreeNode root)</span> &#123;</span><br><span class="line">        <span class="type">int</span>[] res = dp(root);</span><br><span class="line">        <span class="keyword">return</span> Math.max(res[<span class="number">0</span>], res[<span class="number">1</span>]);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// return &#123;x, y&#125; </span></span><br><span class="line">    <span class="comment">// x: 包括root节点的最高金额 </span></span><br><span class="line">    <span class="comment">// y: 不包含root节点的最高金额</span></span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span>[] dp(TreeNode root)&#123;</span><br><span class="line">        <span class="keyword">if</span>(root == <span class="literal">null</span>) <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">int</span>[]&#123;<span class="number">0</span>, <span class="number">0</span>&#125;;</span><br><span class="line">        <span class="type">int</span>[] left = dp(root.left);</span><br><span class="line">        <span class="type">int</span>[] right = dp(root.right);</span><br><span class="line">        <span class="type">int</span> <span class="variable">x</span> <span class="operator">=</span> left[<span class="number">1</span>] + right[<span class="number">1</span>] + root.val;</span><br><span class="line">        <span class="type">int</span> <span class="variable">y</span> <span class="operator">=</span> Math.max(left[<span class="number">1</span>], left[<span class="number">0</span>]) + Math.max(right[<span class="number">1</span>], right[<span class="number">0</span>]);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">int</span>[]&#123;x, y&#125;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="三博弈问题">三、博弈问题</h2>
-<blockquote>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/predict-the-winner/">486.
-预测赢家</a></p>
-</blockquote>
-<p>最核心最关键的还是在【找状态】，理解！！！</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 第一种比较容易理解的，三维数组</span></span><br><span class="line"><span class="comment">// dp[i][j][0] 表示在[xi...xj]区间时，先手的最大得分</span></span><br><span class="line">dp[i][j][<span class="number">0</span>] = Math.max(nums[i]+dp[i+<span class="number">1</span>][j][<span class="number">1</span>], nums[j]+dp[i][j-<span class="number">1</span>][<span class="number">1</span>]);</span><br><span class="line"><span class="comment">// [i...j] 先手可以选择i也可以选择j</span></span><br><span class="line"><span class="comment">// 选择i后，在[i+1...j]区间就变成了后手，就是dp[i+1][j][1]</span></span><br><span class="line"><span class="comment">// 选择j后，在[i...j+1]区间就变成了后手，就是dp[i][j-1][1]</span></span><br><span class="line"><span class="keyword">if</span> 先手选择了i: dp[i][j][<span class="number">1</span>] = dp[i+<span class="number">1</span>][j][<span class="number">0</span>];</span><br><span class="line"><span class="keyword">if</span> 先手选择了j: dp[i][j][<span class="number">1</span>] = dp[i][j-<span class="number">1</span>][<span class="number">0</span>];</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 第二种稍微改进一点，二维数组</span></span><br><span class="line"><span class="comment">// dp[i][j][1] 表示在[xi...xj]区间时，先手的最大得分-后手的最大得分</span></span><br><span class="line">dp[i][j] = Math.max(nums[i] - dp[i+<span class="number">1</span>][j], nums[j] - dp[i][j-<span class="number">1</span>]);</span><br><span class="line"><span class="comment">// 在[i...j]先手做出选择后，就变成了后手，所以是&lt;减&gt;</span></span><br></pre></td></tr></table></figure>
-<h2 id="四扔鸡蛋">四、扔鸡蛋（***）</h2>
-<blockquote>
-<p><a
-target="_blank" rel="noopener" href="https://leetcode.cn/problems/super-egg-drop/">887.鸡蛋掉落</a></p>
-<p>这道题理解上难度很高...</p>
-</blockquote>
-<p><img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221104212852347.png" /></p>
-<p>这里讲一个逆向思维。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dp[i][j] 表示有j个鸡蛋，可以操作i次，可以在最高dp[i][j]的建筑里保证找到f</span><br></pre></td></tr></table></figure>
-<p>比如<code>dp[2][1]=2</code>，表示有1个鸡蛋，可以操作2次，可以在最高2楼的建筑里保证找到<code>f</code>。意思就是如果楼<code>&gt;=</code>3，就不能保证在1个鸡蛋2次操作的情况下找到f。这里的保证是指不管在什么情况下都可以成功找到f，而不是说有一定概率可以找到。很好理解，不管多高的楼层，即使给1个鸡蛋1次操作，也有一定概率可以找到f（第1层就碎了，所以<code>f=0</code>）</p>
-<p>理解完状态之后，就需要找到状态转移方程。先给出来</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dp[i][j] = <span class="number">1</span> + dp[i-<span class="number">1</span>][j-<span class="number">1</span>] + dp[i][j-<span class="number">1</span>];</span><br></pre></td></tr></table></figure>
-<p>这里应该是这道题最难理解的地方。</p>
-<h2 id="五自由之路">五、自由之路</h2>
-<blockquote>
-<p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/freedom-trail/">514.
-自由之路</a><img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221109163239286.png" /></p>
-</blockquote>
-<p>这道题一眼看去和普通的动态规划没什么区别，<strong>给定两个字符串，求某个最值</strong>。</p>
-<p>但是这里的<code>ring</code>是环形的，而且可以顺时针/逆时针旋转，就导致每次的局部最优可能得不到全局最优，有点像回溯算法，需要走到更后面才能知道这一次的选择是否是更优的。</p>
-<p>所以需要在每一步都要列出所有情况，在最后再选出最小的。</p>
-<p>可以这么定义<code>dp</code>数组：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dp[i][j] 表示 匹配key的第i个字符时 ring的第j个字符指向<span class="number">12</span>:<span class="number">00</span> (当然了ring的第j个字符和key的第i个字符是相同的) 所需要的最小步数</span><br></pre></td></tr></table></figure>
-<p>状态转移方程</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dp[i][j] = Math.min( dp[i-<span class="number">1</span>][k] + Math.min( Math.abs(j-k), n - Math.abs(j-k) ) ) k是ring中所有字符等于key[i-<span class="number">1</span>]的下标集合</span><br></pre></td></tr></table></figure>
-<p>含义是：当用ring的第j个字符去匹配key的第i个字符时，所需要的最小步数应该这么求</p>
-<p>列举出前一次匹配的所有情况<span class="math inline">\(dp[i-1][k], k
-\in
-[key的第i-1个字符在ring中的下标集合]\)</span>，计算从每一次的情况走到当前情况需要的更小的步数（因为可以顺时针转也可以逆时针转），最后取这些情况的最小值。</p>
-<p>完整代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">int</span> <span class="title function_">findRotateSteps</span><span class="params">(String ring, String key)</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">m</span> <span class="operator">=</span> ring.length(); <span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> key.length();</span><br><span class="line">    <span class="comment">// 将ring中的字符转换为对应下标</span></span><br><span class="line">    List&lt;Integer&gt;[] char2idx = <span class="keyword">new</span> <span class="title class_">List</span>[<span class="number">26</span>];</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">26</span>; i++)&#123;</span><br><span class="line">        char2idx[i] = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; m; i++)&#123;</span><br><span class="line">        char2idx[ring.charAt(i) - <span class="string">&#x27;a&#x27;</span>].add(i);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 定义并初始化dp数组</span></span><br><span class="line">    <span class="type">int</span>[][] dp = <span class="keyword">new</span> <span class="title class_">int</span>[n][m];</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; n; i ++) Arrays.fill(dp[i], <span class="number">0x3f3f3f</span>);</span><br><span class="line">    <span class="comment">// base case: dp[0][...]</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i : char2idx[key.charAt(<span class="number">0</span>) - <span class="string">&#x27;a&#x27;</span>])&#123;</span><br><span class="line">        dp[<span class="number">0</span>][i] = Math.min( i, m-i ) + <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 递推过程</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt; n; i++)&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> j : char2idx[key.charAt(i) - <span class="string">&#x27;a&#x27;</span>])&#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="type">int</span> k : char2idx[key.charAt(i-<span class="number">1</span>) - <span class="string">&#x27;a&#x27;</span>])&#123;</span><br><span class="line">                dp[i][j] = Math.min(</span><br><span class="line">                    dp[i][j],</span><br><span class="line">                	dp[i-<span class="number">1</span>][k] </span><br><span class="line">                    	+ Math.min( </span><br><span class="line">                    				Math.abs(j-k),</span><br><span class="line">                        			m-Math.abs(j-k)</span><br><span class="line">                    			  ) </span><br><span class="line">                    	+ <span class="number">1</span></span><br><span class="line">                );</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> Arrays.stream(dp[n-<span class="number">1</span>]).min().getAsInt();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="六k-站中转内最便宜的航班">六、K 站中转内最便宜的航班</h2>
-<blockquote>
-<p><a
-target="_blank" rel="noopener" href="https://leetcode.cn/problems/cheapest-flights-within-k-stops/">787.K
-站中转内最便宜的航班</a></p>
-<p><img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221112013321045.png" /></p>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221112013403828.png"
-alt="image-20221112013403828" />
-<figcaption aria-hidden="true">image-20221112013403828</figcaption>
-</figure>
-</blockquote>
-<p>这道题既可以使用Dijkstra算法，也可以使用动态规划算法来解决。</p>
-<p>这道题的起点和终点是确定的，在状态转移过程中选定一个不变，将另一个作为状态，然后另外一个状态就是中转站数k(或者使用边数来表示)</p>
-<p>这里将<code>src</code>固定，将终点和中转站数作为状态，可以写出如下转移方程</p>
-<p><span class="math inline">\(price(k,dst) = min(price(k-1, v) +
-val(v,dst))\)</span>
-<code>v</code>是距离<code>dst</code>还有一步的节点，<span
-class="math inline">\(val(v,dst)\)</span>指边的价值</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">List&lt;<span class="type">int</span>[]&gt;[] graph;</span><br><span class="line"><span class="type">int</span> <span class="variable">inf</span> <span class="operator">=</span> <span class="number">999999</span>;</span><br><span class="line"><span class="type">int</span> src;</span><br><span class="line"><span class="keyword">public</span> <span class="type">int</span> <span class="title function_">findCheapestPrice</span><span class="params">(<span class="type">int</span> n, <span class="type">int</span>[][] flights, <span class="type">int</span> src, <span class="type">int</span> dst, <span class="type">int</span> k)</span> &#123;</span><br><span class="line">    <span class="built_in">this</span>.src = src;</span><br><span class="line">    graph = <span class="keyword">new</span> <span class="title class_">List</span>[];</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; n; i++) graph[i] = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span>[] flight : flights)&#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">from</span> <span class="operator">=</span> flight[<span class="number">0</span>];</span><br><span class="line">        <span class="type">int</span> <span class="variable">to</span> <span class="operator">=</span> flight[<span class="number">1</span>];</span><br><span class="line">        <span class="type">int</span> <span class="variable">price</span> <span class="operator">=</span> flight[<span class="number">2</span>];</span><br><span class="line">        graph[to].add(<span class="keyword">new</span> <span class="title class_">int</span>[]&#123;from, price&#125;);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="type">int</span>[][] mem = <span class="keyword">new</span> <span class="title class_">int</span>[k+<span class="number">2</span>][n];</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; k+<span class="number">2</span>; i++) Arrays.fill(mem[i], inf);</span><br><span class="line">    </span><br><span class="line">    <span class="type">int</span> <span class="variable">ans</span> <span class="operator">=</span> dp(dst, k+<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">return</span> ans == inf ? -<span class="number">1</span> : ans;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="type">int</span> <span class="title function_">dp</span><span class="params">(<span class="type">int</span> d, <span class="type">int</span> k)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(d == src) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span>(k == <span class="number">0</span>) <span class="keyword">return</span> inf;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span>(mem[k][d] != inf)&#123;</span><br><span class="line">        <span class="keyword">return</span> mem[k][d];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span>[] prev : graph[d])&#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">sub_ans</span> <span class="operator">=</span> dp(prev[<span class="number">0</span>], k-<span class="number">1</span>);</span><br><span class="line">        mem[k][d] = Math.min(mem[k][d], sub_ans + prev[<span class="number">1</span>]);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> mem[k][d];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>还有一种更加简便的，去求所有从src开始走1步、2步、...、k+1步到达某节点的最小代价：使用<code>dp[i][j]</code>表示从<code>src</code>走<code>i</code>步到<code>j</code>节点所需要的最小代价。最后只要求<span
-class="math inline">\(min(dp[1][dst],
-dp[2][dst],...,dp[k+1][dst])\)</span>即可。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">int</span> <span class="title function_">findCheapestPrice</span><span class="params">(<span class="type">int</span> n, <span class="type">int</span>[][] flights, <span class="type">int</span> src, <span class="type">int</span> dst, <span class="type">int</span> k)</span> &#123;</span><br><span class="line">    <span class="type">int</span>[][] dp = <span class="keyword">new</span> <span class="title class_">int</span>[k+<span class="number">2</span>][n];</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt;= k+<span class="number">1</span>; i++) Arrays.fill(dp[i], <span class="number">999999</span>);</span><br><span class="line">    dp[<span class="number">0</span>][src] = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt;= k+<span class="number">1</span>; i++)&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span>[] flight : flights)&#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">from</span> <span class="operator">=</span> flight[<span class="number">0</span>];</span><br><span class="line">            <span class="type">int</span> <span class="variable">to</span> <span class="operator">=</span> flight[<span class="number">1</span>];</span><br><span class="line">            <span class="type">int</span> <span class="variable">price</span> <span class="operator">=</span> flight[<span class="number">2</span>];</span><br><span class="line">            dp[i][to] = Math.min(dp[i][to], dp[i-<span class="number">1</span>][from]+price);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="type">int</span> <span class="variable">res</span> <span class="operator">=</span> <span class="number">999999</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt;= k+<span class="number">1</span>; i++)&#123;</span><br><span class="line">        <span class="keyword">if</span>(res &gt; dp[i][dst])&#123;</span><br><span class="line">            res = dp[i][dst];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> res == <span class="number">999999</span> ? -<span class="number">1</span> : res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    
-    
-    
-
-      
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+  </nav>
 
 
 
@@ -1883,7 +1804,7 @@ dp[2][dst],...,dp[k+1][dst])\)</span>即可。</p>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-count">11</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1947,19 +1868,19 @@ dp[2][dst],...,dp[k+1][dst])\)</span>即可。</p>
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">34k</span>
+    <span title="站点总字数">38k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">31 分钟</span>
+    <span title="站点阅读时长">35 分钟</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
   </div>
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共12.1k字</span>
+  <span class="post-count">博客全站共13.2k字</span>
 </div>
 
 

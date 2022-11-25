@@ -28,7 +28,7 @@
 <meta property="og:description" content="Pointer Networks提出了一种新的 neural architecture，可以解决输出序列的大小随着输入序列的大小而变化的问题。文章开头讲到，传统的seq2seq模型以及Attention Mechanism，都只能处理固定size的输入序列。下面主要围绕这Pointer Network展开学习。 首先需要回顾 seq2seq 模型 和 Attention 机制 1 Se">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-11-07T10:32:19.000Z">
-<meta property="article:modified_time" content="2022-11-19T16:11:59.847Z">
+<meta property="article:modified_time" content="2022-11-23T09:37:31.833Z">
 <meta property="article:author" content="zhc">
 <meta property="article:tag" content="NLP">
 <meta name="twitter:card" content="summary">
@@ -233,7 +233,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-11-20 00:11:59" itemprop="dateModified" datetime="2022-11-20T00:11:59+08:00">2022-11-20</time>
+                <time title="修改时间：2022-11-23 17:37:31" itemprop="dateModified" datetime="2022-11-23T17:37:31+08:00">2022-11-23</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -258,7 +258,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3k</span>
+              <span>3.1k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -328,11 +328,11 @@ networks : What are they?</a></p>
 <p>上面提到了，seq2seq模型的Encoder部分将input
 sequence转换成一个vector，也叫context，Decoder根据这个context做输出预测。这样的话，这个context
 vector就成为模型性能的瓶颈了，模型输出结果的正确性取决于这个context
-vector能多好的表达input sequence。</p>
+vector能多好地表达input sequence。</p>
 <p>引入Attention机制，使得模型专注在input sequence的相关部分。</p>
 <p>Attention机制主要在两个地方做了改进</p>
 <ol type="1">
-<li><p>给Decoder部分传递<strong>所有的 hidden state</strong>，而不是
+<li><p>给Decoder部分传递<strong>所有的 hidden state</strong>，而不是一个
 context vector。</p></li>
 <li><p>在Decoder的每一步，为所有的 hidden state 打分，用 softmax
 后的分数乘上对应的 hidden state，然后加和形成<strong>这一步的 context
@@ -357,7 +357,7 @@ src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-
 <ol type="1">
 <li>第①个公式相当于就是上面说的打分，得到的<span
 class="math inline">\(u_{j}^{i}\)</span>表示的是在 time-step 'i'
-时，对Encoder的第j个 hidden state 的打分。</li>
+时，对Encoder的第 j 个 hidden state 的打分。</li>
 <li>第②个公式：使用 <span class="math inline">\(softmax\)</span>
 函数对打分进行处理。</li>
 <li>第③个公式：将 <span class="math inline">\(softmax\)</span> 后的分数
@@ -391,6 +391,12 @@ class="math inline">\(p_{gen}\)</span>结合起来的，最后形成一个总的
 <p>而<code>coverage mechanism</code>则是插入在产生<code>attention distribution</code>的步骤中，因为它是用来反映<code>source text</code>中单词在结果中的覆盖程度，通过将它加入<code>attention distribution</code>的计算中，起到一个反馈的作用，从而有效减少重复问题。（下式红框部分就是<code>coverage vector</code>作为额外输入传递给<code>attention</code>机制的计算中）</p>
 <p><img
 src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221118004630172.png" /></p>
+<p>1、Ptr是对source
+text进行选择，prompt的引入可能会对Ptr的选择产生干扰。</p>
+<p>2、prompt的重点是想要增加LM的理解能力，转换任务类型，从而产生更好的效果，而Ptr是不从output
+dictionary中产生输出，直接从input中产生输出。</p>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221123173727852.png" /></p>
 
     </div>
 
@@ -537,7 +543,7 @@ summarization</span></a></li></ol></li></ol></div>
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-count">11</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -601,19 +607,19 @@ summarization</span></a></li></ol></li></ol></div>
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">34k</span>
+    <span title="站点总字数">38k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">31 分钟</span>
+    <span title="站点阅读时长">35 分钟</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
   </div>
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共12.1k字</span>
+  <span class="post-count">博客全站共13.2k字</span>
 </div>
 
 

@@ -228,7 +228,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-12-17 18:10:26" itemprop="dateModified" datetime="2022-12-17T18:10:26+08:00">2022-12-17</time>
+                <time title="修改时间：2022-12-17 18:14:57" itemprop="dateModified" datetime="2022-12-17T18:14:57+08:00">2022-12-17</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -246,7 +246,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.6k</span>
+              <span>3.5k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -327,12 +327,8 @@ class="math inline">\(t \ge 0\)</span>)</p>
 <p>4、<code>PROCESS</code>结构体</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">s_proc</span> &#123;</span></span><br><span class="line">	...</span><br><span class="line">        </span><br><span class="line">	<span class="type">int</span> wake_tick;  <span class="comment">// 进程醒来的时间片</span></span><br><span class="line">	<span class="type">int</span> state;	<span class="comment">// 进程的状态</span></span><br><span class="line">	<span class="type">int</span> type; <span class="comment">// 进程的类型</span></span><br><span class="line">	<span class="type">int</span> run_after_sleep; <span class="comment">// 判断进程此时是否是醒来立刻运行的</span></span><br><span class="line">	<span class="type">int</span> sleep_time; <span class="comment">// 进程休息的时间片数量</span></span><br><span class="line">&#125;PROCESS;</span><br></pre></td></tr></table></figure>
 <p>5、<strong><code>schedule</code>函数</strong></p>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221217144338875.png"
-alt="调度循环" />
-<figcaption aria-hidden="true">调度循环</figcaption>
-</figure>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221217144338875.png" /></p>
 <blockquote>
 <p>注意：要调度<strong>所有的</strong>睡醒的进程、调度<strong>所有的</strong>结束进程释放资源、调度<strong>所有的</strong>waiting进程。因为逻辑上他们就是要同步进行的。</p>
 </blockquote>
@@ -343,12 +339,8 @@ alt="调度循环" />
 <p>6、一个问题
 <code>reader_max=2 &amp;&amp; sleep_time=2</code>会有一个问题：B进程结束开始睡觉，C进程睡醒，D进程在睡觉，此时<code>rw_mutex</code>被写者进程抢走。</p>
 <p>解决：<u>先调度刚睡醒的进程，然后调度要结束的进程</u>，保证刚睡醒的进程可以和其他进程一样在结束的进程返回资源之后一起竞争。</p>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221215210022614.png"
-alt="image-20221215210022614" />
-<figcaption aria-hidden="true">image-20221215210022614</figcaption>
-</figure>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221215210022614.png" /></p>
 <h2 id="实验">实验</h2>
 <h3 id="中断返回">中断返回</h3>
 <p><img
@@ -363,17 +355,13 @@ src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-
 src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221208113136173.png" /></p>
 <p><strong>奇怪的问题：</strong></p>
 <p>右侧只是做了一些输出，结果就和左边不一样！</p>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221216001730954.png"
-alt="image-20221216001730954" />
-<figcaption aria-hidden="true">image-20221216001730954</figcaption>
-</figure>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221216001730954.png" /></p>
 <p><strong>原因：</strong>在进程中直接调用了<code>schedule</code>函数改变了<code>p_proc_ready</code>，但是由于<code>schedule</code>函数在用户态执行完毕后返回原进程，就没有起到预想中的调度的作用。但是增加了一些输出就做到了，是因为输出方法是系统调用，会进入内核态，然后从内核态返回之后，就进入了<code>p_proc_ready</code>所指定的进程中执行，起到了调度的作用！</p>
 <p>在图中红框部分，<code>0</code>和<code>t</code>本应该是<code>schedule</code>函数中相邻的两次输出，但是中间却夹着一部分字符，这一部分字符就是从第一个打印系统调用中返回后进入新的<code>p_proc_ready</code>指定的进程中执行的输出，出现乱码也应该是因为之前不正当使用<code>schedule</code>函数引起的。</p>
-<p><strong>解决：</strong>用一个系统调用封装<code>schedule</code>函数供进程调用，修改后发现程序行为正常且一致。<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221216002321372.png"
-alt="image-20221216002321372" /></p>
+<p><strong>解决：</strong>用一个系统调用封装<code>schedule</code>函数供进程调用，修改后发现程序行为正常且一致。</p>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221216002321372.png" /></p>
 <h3 id="sleep和milli_delay的对比">sleep和milli_delay的对比</h3>
 <p>对A任务进程执行 <code>milli_delay(100)</code></p>
 <p><img
@@ -436,7 +424,7 @@ src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-12-17 18:10:50" itemprop="dateModified" datetime="2022-12-17T18:10:50+08:00">2022-12-17</time>
+                <time title="修改时间：2022-12-17 18:13:12" itemprop="dateModified" datetime="2022-12-17T18:13:12+08:00">2022-12-17</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -454,7 +442,7 @@ src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2k</span>
+              <span>1.9k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -481,12 +469,8 @@ target="_blank" rel="noopener" href="http://47.122.3.40:8081/#/lab3-type-and-ren
 </blockquote>
 <h2 id="类型检查">类型检查</h2>
 <h3 id="设计类型">设计类型</h3>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221217001208028.png"
-alt="type类图" />
-<figcaption aria-hidden="true">type类图</figcaption>
-</figure>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221217001208028.png" /></p>
 <h3 id="设计符号表">设计符号表</h3>
 <p>==Symbol类==</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Symbol</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> Type type;</span><br><span class="line">    <span class="keyword">public</span> String name;</span><br><span class="line">    <span class="keyword">public</span> Scope scope;</span><br><span class="line">    <span class="keyword">public</span> List&lt;<span class="type">int</span>[]&gt; usePos;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> isNeedReplace;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> row;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> col;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 构造函数</span></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Symbol</span><span class="params">(...)</span>&#123;&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 增加一个该符号被使用的位置</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">addUsePos</span><span class="params">(<span class="type">int</span> row, <span class="type">int</span> col)</span>&#123;&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 调试使用</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">toString</span><span class="params">()</span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -576,13 +560,8 @@ alt="type类图" />
 </blockquote>
 <p>思路：</p>
 <p>在第一次遍历语法树的过程中，解析变量之后将该变量的位置加入到符号的<code>usePos</code>列表中，并且找到需要重命名的那个变量(<code>isNeedReplace</code>)。在第二次遍历过程中，将需要重命名的那个符号的<code>usePos</code>取出，遍历到对应位置后进行重命名即可。</p>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221217105317387.png"
-alt="在打印语法树的Visitor构造函数中获取全部需要重命名的变量的位置" />
-<figcaption
-aria-hidden="true">在打印语法树的Visitor构造函数中获取全部需要重命名的变量的位置</figcaption>
-</figure>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221217105317387.png" /></p>
 <h2 id="碰到的问题">碰到的问题</h2>
 <p>感觉比较困难的地方主要还是在第一部分语义错误检查，因为出错了之后需要自己想用例去排查，而且“最本质错误”的要求导致bug比较难以找到。</p>
 
@@ -845,7 +824,7 @@ target="_blank" rel="noopener" href="https://github.com/courses-at-nju-by-hfwei/
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-12-17 18:09:36" itemprop="dateModified" datetime="2022-12-17T18:09:36+08:00">2022-12-17</time>
+                <time title="修改时间：2022-12-17 18:14:14" itemprop="dateModified" datetime="2022-12-17T18:14:14+08:00">2022-12-17</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -863,7 +842,7 @@ target="_blank" rel="noopener" href="https://github.com/courses-at-nju-by-hfwei/
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.7k</span>
+              <span>2.9k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -888,26 +867,14 @@ target="_blank" rel="noopener" href="https://github.com/wlmnzf/oranges/tree/mast
 <h3 id="运行">运行</h3>
 <h4 id="问题1">问题1</h4>
 <p>make image失败</p>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221108200704537.png"
-alt="image-20221108200704537" />
-<figcaption aria-hidden="true">image-20221108200704537</figcaption>
-</figure>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221108200704537.png" /></p>
 <p>解决方法</p>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221108200905099.png"
-alt="image-20221108200905099" />
-<figcaption aria-hidden="true">image-20221108200905099</figcaption>
-</figure>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221108200905099.png" /></p>
 <p>结果</p>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221108201025947.png"
-alt="image-20221108201025947" />
-<figcaption aria-hidden="true">image-20221108201025947</figcaption>
-</figure>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221108201025947.png" /></p>
 <h4 id="问题2">问题2</h4>
 <p><code>make image</code>结束之后，执行下面的命令失败</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bochs -f bochsrc</span><br></pre></td></tr></table></figure>
@@ -916,12 +883,8 @@ alt="image-20221108201025947" />
 <p>解决方法</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install bochs-x</span><br></pre></td></tr></table></figure>
 <p>结果显示</p>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221108201337846.png"
-alt="image-20221108201337846" />
-<figcaption aria-hidden="true">image-20221108201337846</figcaption>
-</figure>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221108201337846.png" /></p>
 <h3 id="已实现和待实现">已实现和待实现</h3>
 <h4 id="已实现">已实现</h4>
 <ol type="1">
@@ -949,92 +912,48 @@ checked="" />退格换行和TAB需要一次完成</li>
 组合键撤回</li>
 </ul>
 <h2 id="理解代码">理解代码</h2>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112082935878.png"
-alt="image-20221112082935878" />
-<figcaption aria-hidden="true">image-20221112082935878</figcaption>
-</figure>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112082935878.png" /></p>
 <p>首先，需要理解代码，可以照着《orange's：一个操作系统的实现》第七章的讲解一起看。</p>
 <p>输出一个字符的函数调用逻辑</p>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221110203047699.png"
-alt="image-20221110203047699" />
-<figcaption aria-hidden="true">image-20221110203047699</figcaption>
-</figure>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221110203047699.png" /></p>
 <p>当初始化结束后，就会进入到<code>task_tty()</code>函数中，进行不断的循环。</p>
 <h3
 id="探究console结构体中四个变量的含义">探究CONSOLE结构体中四个变量的含义</h3>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221111162034665.png"
-alt="image-20221111162034665" />
-<figcaption aria-hidden="true">image-20221111162034665</figcaption>
-</figure>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221111162034665.png" /></p>
 <p><strong>分析过程</strong></p>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221111090406115.png"
-alt="image-20221111090406115" />
-<figcaption aria-hidden="true">image-20221111090406115</figcaption>
-</figure>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221111090406115.png" /></p>
 <p><u>屏幕一行80个字符，屏幕总共25行。</u></p>
 <p>在敲字符过程中，<u><code>cursor</code>在不断加1</u>，<u><code>original_addr</code>始终为<code>0x0</code></u>，<code>current_start_addr</code>是<u>当前屏幕可见范围的开始位置</u>距离<u>最开始显示位置</u>的偏移。</p>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221111091301955.png"
-alt="image-20221111091301955" />
-<figcaption aria-hidden="true">image-20221111091301955</figcaption>
-</figure>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221111091301955.png" /></p>
 <p>按到最后</p>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221111162617930.png"
-alt="image-20221111162617930" />
-<figcaption aria-hidden="true">image-20221111162617930</figcaption>
-</figure>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221111162617930.png" /></p>
 <p>可以发现<code>cursor</code>的值最大只能到<code>0x1554</code>，因为被<code>v_mem_limit</code>所限制。</p>
 <p>经过分析就可以基本确定CONSOLE结构体四个变量的含义，用一张图来表示一下</p>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221111164821213.png"
-alt="image-20221111164821213" />
-<figcaption aria-hidden="true">image-20221111164821213</figcaption>
-</figure>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221111164821213.png" /></p>
 <h2 id="实现功能">实现功能</h2>
 <h3 id="tab">TAB</h3>
 <p>在<code>keyboard.h</code>中可以发现TAB是一个不可显示的字符，所以在<code>tty.c</code>的<code>in_process</code>中要增加对于<code>TAB</code>的识别，将其放进缓冲区内。然后在<code>console.c</code>的<code>out_char</code>函数中增加对<code>\t</code>的输出处理。</p>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112160733005.png"
-alt="image-20221112160733005" />
-<figcaption aria-hidden="true">image-20221112160733005</figcaption>
-</figure>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112160949600.png"
-alt="image-20221112160949600" />
-<figcaption aria-hidden="true">image-20221112160949600</figcaption>
-</figure>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112160733005.png" /></p>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112160949600.png" /></p>
 <h3 id="清屏">清屏</h3>
 <p>清屏的功能实现在逻辑上比较简单，只要不断地调用<code>out_char()</code>函数，传入<code>\b</code>，直到<code>cursor</code>回到<code>original_addr</code>位置。</p>
 <p>但是如何在实现每20秒清屏一次呢？要理解<code>kernel_main()</code>函数中的任务，可以新增一个任务，<code>task_clear_screen</code>，然后在其中执行清屏任务，并且每次执行完毕后延迟20s。</p>
 <p>1、将<code>task_clear_screen</code>声明成一个任务，不断执行</p>
 <p>在<code>global.c</code>中做相应修改，并修改对应的宏</p>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112161118740.png"
-alt="image-20221112161118740" />
-<figcaption aria-hidden="true">image-20221112161118740</figcaption>
-</figure>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112161118740.png" /></p>
 <p>2、在<code>task_clear_screen</code>任务中完成清屏逻辑，并且延迟20s</p>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221111215247007.png"
-alt="image-20221111215247007" />
-<figcaption aria-hidden="true">image-20221111215247007</figcaption>
-</figure>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221111215247007.png" /></p>
 <blockquote>
 <p>每个任务中while循环不能break，否则执行会报错。</p>
 </blockquote>
@@ -1045,57 +964,29 @@ alt="image-20221111215247007" />
 <p>对于<code>\t</code>还好说，只要把光标减4即可；但是对于<code>\n</code>来说，就有点麻烦了。</p>
 <p>一开始，想让光标一直往回移动直到遇到不是空格的字符。但是如果在输入<code>\n</code>之前刚输入了空格呢？这样显然就不对，而且实现起来还很复杂。</p>
 <p>所以需要借助新的数据结构来存储已经显示的字符，并且对显示的字符做一个包装，做成一个结构体。</p>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221111192544494.png"
-alt="image-20221111192544494" />
-<figcaption aria-hidden="true">image-20221111192544494</figcaption>
-</figure>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221111192544494.png" /></p>
 <p>再构建一个存储当前屏幕中所有显示的字符的结构体</p>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221111192521635.png"
-alt="image-20221111192521635" />
-<figcaption aria-hidden="true">image-20221111192521635</figcaption>
-</figure>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221111192521635.png" /></p>
 <p>然后需要在适当的地方将这个数据结构插入</p>
 <p><strong>过程</strong></p>
 <p>1、初始化C_BUF结构体</p>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221111193022381.png"
-alt="image-20221111193022381" />
-<figcaption aria-hidden="true">image-20221111193022381</figcaption>
-</figure>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221111193022381.png" /></p>
 <p>2、在将字符放入TTY中的同时，也将封装起来的字符放进C_BUF中</p>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221111193053341.png"
-alt="image-20221111193053341" />
-<figcaption aria-hidden="true">image-20221111193053341</figcaption>
-</figure>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221111193053341.png" /></p>
 <p>3、<strong>在<code>out_char</code>函数中实现对应逻辑</strong></p>
 <p>在其他输出字符的位置需要加上对CHAR结构体中before_cursor和after_cursor的赋值，例如：</p>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221111193614434.png"
-alt="image-20221111193614434" />
-<figcaption aria-hidden="true">image-20221111193614434</figcaption>
-</figure>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221111193614434.png" /></p>
 <p>然后在处理退格键时就可以用如下一段代码解决</p>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221111193431518.png"
-alt="image-20221111193431518" />
-<figcaption aria-hidden="true">image-20221111193431518</figcaption>
-</figure>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221111193431518.png" /></p>
 <p>4、显示字符结束后，需要修改C_BUF中的<code>buf_cur_idx</code></p>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221111193124708.png"
-alt="image-20221111193124708" />
-<figcaption aria-hidden="true">image-20221111193124708</figcaption>
-</figure>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221111193124708.png" /></p>
 <p><strong>这么设计就可以把所有的字符统一起来处理，在退格时只要回到按下该键前的光标位置即可。</strong></p>
 <blockquote>
 <p>注意需要把p_cbuf作为全局变量声明，这样可以在所有文件中使用，而不用作为函数参数传来传去。</p>
@@ -1110,79 +1001,39 @@ alt="image-20221111193124708" />
 <p>4、从匹配态退出。<u>删去搜索字符串</u>，<u>把黑底红字的改成黑底白字</u>，<u>重新显示</u>。</p>
 <p><strong>过程</strong></p>
 <p>1、定义一些全局变量和常量，对CHAR结构体进行调整(增加color字段)</p>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112145803256.png"
-alt="image-20221112145803256" />
-<figcaption aria-hidden="true">image-20221112145803256</figcaption>
-</figure>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112144313280.png"
-alt="image-20221112144313280" />
-<figcaption aria-hidden="true">image-20221112144313280</figcaption>
-</figure>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112144339441.png"
-alt="image-20221112144339441" />
-<figcaption aria-hidden="true">image-20221112144339441</figcaption>
-</figure>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112145803256.png" /></p>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112144313280.png" /></p>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112144339441.png" /></p>
 <p>状态的变化</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">INIT(按ESC) -&gt; SEARCH(按Enter) -&gt; MATCH(按ESC) -&gt; INIT</span><br></pre></td></tr></table></figure>
 <p>2、在每个状态编写相应逻辑</p>
 <p><strong>INIT</strong></p>
 <p>在<code>in_process</code>函数中增加对ESC的识别</p>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112144935869.png"
-alt="image-20221112144935869" />
-<figcaption aria-hidden="true">image-20221112144935869</figcaption>
-</figure>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112144935869.png" /></p>
 <p>这个初始化要小心，每次进入搜索状态都要进行初始化</p>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112145609113.png"
-alt="image-20221112145609113" />
-<figcaption aria-hidden="true">image-20221112145609113</figcaption>
-</figure>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112145609113.png" /></p>
 <p><strong>SEARCH</strong></p>
 <p>改变in_process中对Enter键的处理</p>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112145035952.png"
-alt="image-20221112145035952" />
-<figcaption aria-hidden="true">image-20221112145035952</figcaption>
-</figure>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112145542894.png"
-alt="image-20221112145542894" />
-<figcaption aria-hidden="true">image-20221112145542894</figcaption>
-</figure>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112145035952.png" /></p>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112145542894.png" /></p>
 <p><strong>MATCH</strong></p>
 <p>在in_process函数开头加上判断，只接收ESC</p>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112145201780.png"
-alt="image-20221112145201780" />
-<figcaption aria-hidden="true">image-20221112145201780</figcaption>
-</figure>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112145515851.png"
-alt="image-20221112145515851" />
-<figcaption aria-hidden="true">image-20221112145515851</figcaption>
-</figure>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112145201780.png" /></p>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112145515851.png" /></p>
 <p>在out_char函数中也要做相应处理</p>
 <p>1、MATCH状态下是不需要向C_BUF数组中增添CHAR的，只做输出。</p>
 <p>2、SEARCH状态下要记录搜索字符串，并且注意SEARCH状态下是黑底红色。</p>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112145247460.png"
-alt="image-20221112145247460" />
-<figcaption aria-hidden="true">image-20221112145247460</figcaption>
-</figure>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112145247460.png" /></p>
 <blockquote>
 <p>注意：在退格搜索字符串时(<code>SEARCH</code>状态)，不能将原来的字符串删除。</p>
 </blockquote>
@@ -1194,36 +1045,20 @@ alt="image-20221112145247460" />
 <p>最终采用想法1，需要理清ACTION数组在什么位置更新！</p>
 <p>1、创建数据结构</p>
 <p>其中<code>MAX_ACTION</code>为1000，即支持大约1000次撤销。</p>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112155756326.png"
-alt="image-20221112155756326" />
-<figcaption aria-hidden="true">image-20221112155756326</figcaption>
-</figure>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112155756326.png" /></p>
 <p>2、初始化ACTION列表</p>
 <p>在task_tty函数中调用初始化函数即可</p>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112155904351.png"
-alt="image-20221112155904351" />
-<figcaption aria-hidden="true">image-20221112155904351</figcaption>
-</figure>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112155904351.png" /></p>
 <p>3、向列表中增加ACTION</p>
 <p>经过思考，选在tty_do_write函数的out_char后面</p>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112160009078.png"
-alt="image-20221112160009078" />
-<figcaption aria-hidden="true">image-20221112160009078</figcaption>
-</figure>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112160009078.png" /></p>
 <p>4、撤销操作</p>
 <p>在in_process函数中增加以下逻辑，就是在判断出是<code>Ctrl+z</code>组合键后，回退ACTION数组，做逆操作。</p>
-<figure>
-<img
-src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112160101647.png"
-alt="image-20221112160101647" />
-<figcaption aria-hidden="true">image-20221112160101647</figcaption>
-</figure>
+<p><img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112160101647.png" /></p>
 <blockquote>
 <p>注意虚拟机中的热键 VirtualBox默认是 Right Ctrl</p>
 <p>导致Right Ctrl按不出来</p>
@@ -2265,19 +2100,19 @@ src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">47k</span>
+    <span title="站点总字数">46k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">43 分钟</span>
+    <span title="站点阅读时长">42 分钟</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
   </div>
 
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共18k字</span>
+  <span class="post-count">博客全站共17.9k字</span>
 </div>
 
 

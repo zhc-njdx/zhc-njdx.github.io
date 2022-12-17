@@ -228,7 +228,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-12-17 16:05:06" itemprop="dateModified" datetime="2022-12-17T16:05:06+08:00">2022-12-17</time>
+                <time title="修改时间：2022-12-17 18:10:26" itemprop="dateModified" datetime="2022-12-17T18:10:26+08:00">2022-12-17</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -287,7 +287,7 @@ src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-
 <p>调度的逻辑就是：<strong>找到剩余时间片最多（也就是优先级最高）的那个进程</strong></p>
 <p><img
 src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221206111347873.png" /></p>
-<p>##实现过程</p>
+<h2 id="实现过程">实现过程</h2>
 <h3
 id="添加一个系统调用print_strchar-s">添加一个系统调用：print_str(char*
 s)</h3>
@@ -349,8 +349,8 @@ src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-
 alt="image-20221215210022614" />
 <figcaption aria-hidden="true">image-20221215210022614</figcaption>
 </figure>
-<p>##实验</p>
-<p>###中断返回</p>
+<h2 id="实验">实验</h2>
+<h3 id="中断返回">中断返回</h3>
 <p><img
 src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221208101839093.png" /></p>
 <p>schedule调度策略采用顺序调度，如下结果可以发现，当再次调度到A的时候是先打印的是<code>a.</code>，可见再次调度之后确实是从中断处继续执行的。</p>
@@ -374,7 +374,7 @@ alt="image-20221216001730954" />
 <p><strong>解决：</strong>用一个系统调用封装<code>schedule</code>函数供进程调用，修改后发现程序行为正常且一致。<img
 src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221216002321372.png"
 alt="image-20221216002321372" /></p>
-<p>###sleep和milli_delay的对比</p>
+<h3 id="sleep和milli_delay的对比">sleep和milli_delay的对比</h3>
 <p>对A任务进程执行 <code>milli_delay(100)</code></p>
 <p><img
 src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221206112309949.png" /></p>
@@ -436,7 +436,7 @@ src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-12-17 11:03:44" itemprop="dateModified" datetime="2022-12-17T11:03:44+08:00">2022-12-17</time>
+                <time title="修改时间：2022-12-17 18:10:50" itemprop="dateModified" datetime="2022-12-17T18:10:50+08:00">2022-12-17</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -479,7 +479,7 @@ target="_blank" rel="noopener" href="http://47.122.3.40:8081/#/lab3-type-and-ren
 <p>1、对程序进行类型检查，找到所有的语义错误（11种）</p>
 <p>2、若程序没有语义错误，则完成变量重命名后打印语法树</p>
 </blockquote>
-<p>##类型检查</p>
+<h2 id="类型检查">类型检查</h2>
 <h3 id="设计类型">设计类型</h3>
 <figure>
 <img
@@ -487,13 +487,13 @@ src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-
 alt="type类图" />
 <figcaption aria-hidden="true">type类图</figcaption>
 </figure>
-<p>###设计符号表</p>
+<h3 id="设计符号表">设计符号表</h3>
 <p>==Symbol类==</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Symbol</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> Type type;</span><br><span class="line">    <span class="keyword">public</span> String name;</span><br><span class="line">    <span class="keyword">public</span> Scope scope;</span><br><span class="line">    <span class="keyword">public</span> List&lt;<span class="type">int</span>[]&gt; usePos;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> isNeedReplace;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> row;</span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> col;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 构造函数</span></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Symbol</span><span class="params">(...)</span>&#123;&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 增加一个该符号被使用的位置</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">addUsePos</span><span class="params">(<span class="type">int</span> row, <span class="type">int</span> col)</span>&#123;&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 调试使用</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">toString</span><span class="params">()</span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>==Scope类==</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Scope</span>&#123;</span><br><span class="line">    Scope enclosingScope;</span><br><span class="line">    Map&lt;String, Symbol&gt; symbols;</span><br><span class="line">    List&lt;Scope&gt; childScope;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Scope</span><span class="params">(...)</span>&#123;&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 定义一个符号</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">define</span><span class="params">(Symbol symbol)</span>&#123;&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// (全局)解析一个符号</span></span><br><span class="line">    <span class="keyword">public</span> Symbol <span class="title function_">resolve</span><span class="params">(String name)</span>&#123;&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// (在当前作用域下)解析一个符号</span></span><br><span class="line">    <span class="keyword">public</span> Symbol <span class="title function_">resolveCurrentScope</span><span class="params">(String name)</span>&#123;&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 增加一个该作用域的子作用域</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">addChildScope</span><span class="params">(Scope s)</span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>之后只需要在遍历语法树的过程中，在合适的位置创建作用域，并在合适的位置退出作用域，以及在函数定义、变量声明的对应处理函数中将变量包装成符号加入到作用域的符号列表中。</p>
-<p>###处理语义错误</p>
+<h3 id="处理语义错误">处理语义错误</h3>
 <p>需要针对11种错误依次进行分析处理</p>
 <table>
 <colgroup>
@@ -570,7 +570,7 @@ alt="type类图" />
 <p>这一部分最麻烦的是，一个错误会引起连锁错误，但是要求只打印"最本质错误"。</p>
 <p>我在处理的过程中采用：一旦出现错误之后，返回的类型都是<code>null</code>，而上层的函数只有在下层函数不返回<code>null</code>是才会在这一层进行错误检查，否则直接返回。但是需要注意的是，不是每一个函数返回null都代表出现错误，还需要结合具体情况分析，不过大部分都适用。</p>
 </blockquote>
-<p>##重命名</p>
+<h2 id="重命名">重命名</h2>
 <blockquote>
 <p>为所有与选中变量<strong>生命周期一致</strong>的<strong>同名变量</strong>重命名</p>
 </blockquote>
@@ -845,7 +845,7 @@ target="_blank" rel="noopener" href="https://github.com/courses-at-nju-by-hfwei/
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-12-17 18:05:08" itemprop="dateModified" datetime="2022-12-17T18:05:08+08:00">2022-12-17</time>
+                <time title="修改时间：2022-12-17 18:09:36" itemprop="dateModified" datetime="2022-12-17T18:09:36+08:00">2022-12-17</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -882,7 +882,7 @@ target="_blank" rel="noopener" href="https://github.com/courses-at-nju-by-hfwei/
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>##准备</p>
+          <h2 id="准备">准备</h2>
 <p>实验以《orange's：一个操作系统的实现》的<a
 target="_blank" rel="noopener" href="https://github.com/wlmnzf/oranges/tree/master/chapter7/o">代码</a>为基础</p>
 <h3 id="运行">运行</h3>
@@ -948,7 +948,7 @@ checked="" />退格换行和TAB需要一次完成</li>
 <li><input type="checkbox" disabled="" checked="" />control + z
 组合键撤回</li>
 </ul>
-<p>##理解代码</p>
+<h2 id="理解代码">理解代码</h2>
 <figure>
 <img
 src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112082935878.png"
@@ -1002,7 +1002,7 @@ src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-
 alt="image-20221111164821213" />
 <figcaption aria-hidden="true">image-20221111164821213</figcaption>
 </figure>
-<p>##实现功能</p>
+<h2 id="实现功能">实现功能</h2>
 <h3 id="tab">TAB</h3>
 <p>在<code>keyboard.h</code>中可以发现TAB是一个不可显示的字符，所以在<code>tty.c</code>的<code>in_process</code>中要增加对于<code>TAB</code>的识别，将其放进缓冲区内。然后在<code>console.c</code>的<code>out_char</code>函数中增加对<code>\t</code>的输出处理。</p>
 <figure>
@@ -1228,7 +1228,7 @@ alt="image-20221112160101647" />
 <p>注意虚拟机中的热键 VirtualBox默认是 Right Ctrl</p>
 <p>导致Right Ctrl按不出来</p>
 </blockquote>
-<p>###总结</p>
+<h3 id="总结">总结</h3>
 <p>由于上面的描述是写完一个功能后立刻写下的，所以导致代码前后会出现不一致。</p>
 <p>感觉十分重要的调整是 【将字符加进C_BUF结构体中buf 】的位置 和 【更新
 C_BUF结构体中 buf_cur_idx】 的位置，最后是都放在了out_char函数中。</p>

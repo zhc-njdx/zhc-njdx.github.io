@@ -20,15 +20,15 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"manual","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="##准备 实验以《orange&#39;s：一个操作系统的实现》的代码为基础 运行 问题1 make image失败   image-20221108200704537  解决方法   image-20221108200905099  结果   image-20221108201025947  问题2 make image结束之后，执行下面的命令失败 1bochs">
+  <meta name="description" content="准备 实验以《orange&#39;s：一个操作系统的实现》的代码为基础 运行 问题1 make image失败   image-20221108200704537  解决方法   image-20221108200905099  结果   image-20221108201025947  问题2 make image结束之后，执行下面的命令失败 1bochs -">
 <meta property="og:type" content="article">
 <meta property="og:title" content="操作系统-Lab3">
 <meta property="og:url" content="http://example.com/2022/11/21/OS-Lab3/index.html">
 <meta property="og:site_name" content="ICDE">
-<meta property="og:description" content="##准备 实验以《orange&#39;s：一个操作系统的实现》的代码为基础 运行 问题1 make image失败   image-20221108200704537  解决方法   image-20221108200905099  结果   image-20221108201025947  问题2 make image结束之后，执行下面的命令失败 1bochs">
+<meta property="og:description" content="准备 实验以《orange&#39;s：一个操作系统的实现》的代码为基础 运行 问题1 make image失败   image-20221108200704537  解决方法   image-20221108200905099  结果   image-20221108201025947  问题2 make image结束之后，执行下面的命令失败 1bochs -">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-11-20T16:00:00.000Z">
-<meta property="article:modified_time" content="2022-12-17T10:05:08.653Z">
+<meta property="article:modified_time" content="2022-12-17T10:09:36.283Z">
 <meta property="article:author" content="zhc">
 <meta property="article:tag" content="操作系统">
 <meta name="twitter:card" content="summary">
@@ -233,7 +233,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-12-17 18:05:08" itemprop="dateModified" datetime="2022-12-17T18:05:08+08:00">2022-12-17</time>
+                <time title="修改时间：2022-12-17 18:09:36" itemprop="dateModified" datetime="2022-12-17T18:09:36+08:00">2022-12-17</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -277,7 +277,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>##准备</p>
+        <h2 id="准备">准备</h2>
 <p>实验以《orange's：一个操作系统的实现》的<a
 target="_blank" rel="noopener" href="https://github.com/wlmnzf/oranges/tree/master/chapter7/o">代码</a>为基础</p>
 <h3 id="运行">运行</h3>
@@ -343,7 +343,7 @@ checked="" />退格换行和TAB需要一次完成</li>
 <li><input type="checkbox" disabled="" checked="" />control + z
 组合键撤回</li>
 </ul>
-<p>##理解代码</p>
+<h2 id="理解代码">理解代码</h2>
 <figure>
 <img
 src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221112082935878.png"
@@ -397,7 +397,7 @@ src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-
 alt="image-20221111164821213" />
 <figcaption aria-hidden="true">image-20221111164821213</figcaption>
 </figure>
-<p>##实现功能</p>
+<h2 id="实现功能">实现功能</h2>
 <h3 id="tab">TAB</h3>
 <p>在<code>keyboard.h</code>中可以发现TAB是一个不可显示的字符，所以在<code>tty.c</code>的<code>in_process</code>中要增加对于<code>TAB</code>的识别，将其放进缓冲区内。然后在<code>console.c</code>的<code>out_char</code>函数中增加对<code>\t</code>的输出处理。</p>
 <figure>
@@ -623,7 +623,7 @@ alt="image-20221112160101647" />
 <p>注意虚拟机中的热键 VirtualBox默认是 Right Ctrl</p>
 <p>导致Right Ctrl按不出来</p>
 </blockquote>
-<p>###总结</p>
+<h3 id="总结">总结</h3>
 <p>由于上面的描述是写完一个功能后立刻写下的，所以导致代码前后会出现不一致。</p>
 <p>感觉十分重要的调整是 【将字符加进C_BUF结构体中buf 】的位置 和 【更新
 C_BUF结构体中 buf_cur_idx】 的位置，最后是都放在了out_char函数中。</p>
@@ -756,7 +756,7 @@ C_BUF结构体中 buf_cur_idx】 的位置，最后是都放在了out_char函数
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C"><span class="nav-number">1.</span> <span class="nav-text">运行</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%E9%A2%981"><span class="nav-number">1.1.</span> <span class="nav-text">问题1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%E9%A2%982"><span class="nav-number">1.2.</span> <span class="nav-text">问题2</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%B2%E5%AE%9E%E7%8E%B0%E5%92%8C%E5%BE%85%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">已实现和待实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B7%B2%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.1.</span> <span class="nav-text">已实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BE%85%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.2.</span> <span class="nav-text">待实现</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A2%E7%A9%B6console%E7%BB%93%E6%9E%84%E4%BD%93%E4%B8%AD%E5%9B%9B%E4%B8%AA%E5%8F%98%E9%87%8F%E7%9A%84%E5%90%AB%E4%B9%89"><span class="nav-number">3.</span> <span class="nav-text">探究CONSOLE结构体中四个变量的含义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tab"><span class="nav-number">4.</span> <span class="nav-text">TAB</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B8%85%E5%B1%8F"><span class="nav-number">5.</span> <span class="nav-text">清屏</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%80%E6%A0%BC%E4%B8%80%E6%AC%A1%E5%AE%8C%E6%88%90"><span class="nav-number">6.</span> <span class="nav-text">退格一次完成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E6%89%BE%E5%8A%9F%E8%83%BD"><span class="nav-number">7.</span> <span class="nav-text">查找功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#controlz%E6%92%A4%E9%94%80"><span class="nav-number">8.</span> <span class="nav-text">control+z撤销</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%86%E5%A4%87"><span class="nav-number">1.</span> <span class="nav-text">准备</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C"><span class="nav-number">1.1.</span> <span class="nav-text">运行</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%E9%A2%981"><span class="nav-number">1.1.1.</span> <span class="nav-text">问题1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%E9%A2%982"><span class="nav-number">1.1.2.</span> <span class="nav-text">问题2</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%B2%E5%AE%9E%E7%8E%B0%E5%92%8C%E5%BE%85%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.2.</span> <span class="nav-text">已实现和待实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B7%B2%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.2.1.</span> <span class="nav-text">已实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BE%85%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.2.2.</span> <span class="nav-text">待实现</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%90%86%E8%A7%A3%E4%BB%A3%E7%A0%81"><span class="nav-number">2.</span> <span class="nav-text">理解代码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A2%E7%A9%B6console%E7%BB%93%E6%9E%84%E4%BD%93%E4%B8%AD%E5%9B%9B%E4%B8%AA%E5%8F%98%E9%87%8F%E7%9A%84%E5%90%AB%E4%B9%89"><span class="nav-number">2.1.</span> <span class="nav-text">探究CONSOLE结构体中四个变量的含义</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E5%8A%9F%E8%83%BD"><span class="nav-number">3.</span> <span class="nav-text">实现功能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#tab"><span class="nav-number">3.1.</span> <span class="nav-text">TAB</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B8%85%E5%B1%8F"><span class="nav-number">3.2.</span> <span class="nav-text">清屏</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%80%E6%A0%BC%E4%B8%80%E6%AC%A1%E5%AE%8C%E6%88%90"><span class="nav-number">3.3.</span> <span class="nav-text">退格一次完成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E6%89%BE%E5%8A%9F%E8%83%BD"><span class="nav-number">3.4.</span> <span class="nav-text">查找功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#controlz%E6%92%A4%E9%94%80"><span class="nav-number">3.5.</span> <span class="nav-text">control+z撤销</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.6.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 

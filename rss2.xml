@@ -9,8 +9,64 @@
     <atom:link href="http://example.com/rss2.xml" rel="self" type="application/rss+xml"/>
     
     <description></description>
-    <pubDate>Sat, 17 Dec 2022 10:14:57 GMT</pubDate>
+    <pubDate>Tue, 27 Dec 2022 06:05:26 GMT</pubDate>
     <generator>http://hexo.io/</generator>
+    
+    <item>
+      <title>Lab3 Page Tables</title>
+      <link>http://example.com/2022/12/27/lab3/</link>
+      <guid>http://example.com/2022/12/27/lab3/</guid>
+      <pubDate>Mon, 26 Dec 2022 16:00:00 GMT</pubDate>
+      
+        
+        
+      <description>&lt;h2 id=&quot;lecture-4-chapter-3&quot;&gt;0 lecture 4 &amp;amp; chapter 3&lt;/h2&gt;
+&lt;h3 id=&quot;lecture-4&quot;&gt;Lecture 4&lt;/h3&gt;
+&lt;h3 id=&quot;chapter-3-page-tables&quot;&gt;Chapter 3 P</description>
+        
+      
+      
+      
+      <content:encoded><![CDATA[<h2 id="lecture-4-chapter-3">0 lecture 4 &amp; chapter 3</h2><h3 id="lecture-4">Lecture 4</h3><h3 id="chapter-3-page-tables">Chapter 3 Page tables</h3><h4 id="xv6的页表映射机制">xv6的页表映射机制</h4><p><imgsrc="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221225144537100.png" /></p><h4 id="xv6-内核地址空间">xv6 内核地址空间</h4><p><imgsrc="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221225144757600.png" /></p><h4 id="xv6的页表代码">xv6的页表代码</h4><blockquote><p><code>vm.c</code></p></blockquote><p>核心数据结构：==pagetable_t==</p><p>核心函数：==walk== 和 ==mappages==</p><h4 id="物理地址分配代码">物理地址分配代码</h4><blockquote><p><code>kalloc.c</code></p></blockquote><p>核心数据结构：==kmem==</p><p>核心函数：==kfree== 和 ==kalloc==</p><h4 id="进程地址空间">进程地址空间</h4><p><imgsrc="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221225152730759.png" /></p><h4 id="系统调用sbrk-和-exec">系统调用：sbrk 和 exec</h4><p><strong>sbrk</strong>：为一个进程去减少或者增加它的内存（<code>kernel/sysproc.c</code>）</p><p><strong>exec</strong>：创建一个地址空间的用户部分</p><blockquote><p><font color='red'>what is trampoline?</font></p><p>trampolinepage存储了用户空间和内核空间相互切换的代码，无论是在内核空间还是在用户空间它都映射在相同的虚拟地址，这样在切换之后还可以继续工作。</p><p>相关文章：<ahref="https://xiayingp.gitbook.io/build_a_os/traps-and-interrupts/untitled-3">Whatis trampoline?</a></p><p><font color='red'>what is trapframe?</font></p><p><code>trapframe</code>是存在于用户地址空间，位于<code>trampoline</code>下面的大小为<code>PGSIZE</code>（4096字节）的一块内存，用于在用户地址空间向内核地址空间切换时保存用户空间的寄存器。</p></blockquote><h2 id="speed-up-system-calls">1 Speed up system calls</h2><p><u>任务描述</u>：加速<code>getpid()</code>系统调用。方法是在<code>trapframe</code>前面映射一个只读的页，在这个页的开始，存储一个结构体<code>syscall</code>，结构体里存储当前进程的<code>pid</code>，然后通过已经提供的<code>ugetpid()</code>函数获得<code>pid</code>。</p><p><u>思路</u>：可以参考<code>trapframe</code>的构造。</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 步骤</span></span><br><span class="line"><span class="comment">// 1. 在proc结构体中增加一个usyscall字段</span></span><br><span class="line"><span class="comment">// 2. 在allocproc()函数为usyscall分配空间，并且将pid存储在usyscall中</span></span><br><span class="line"><span class="comment">// 3. 在proc_pagetable()函数中将p-&gt;usyscall（物理地址）映射到USYSCALL（虚拟地址）</span></span><br><span class="line"><span class="comment">// 4. 在freeproc()函数中将usyscall的空间释放</span></span><br><span class="line"><span class="comment">// 5. 在proc_freepagetable()函数中取消之前建立的映射</span></span><br></pre></td></tr></table></figure><h2 id="print-a-page-table">2 Print a page table</h2><p><u>任务描述</u>：如题要求打印页表。</p><p><u>思路</u>：参考<code>freewalk</code>函数进行递归。</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> level = <span class="number">1</span>;</span><br><span class="line"><span class="type">void</span></span><br><span class="line"><span class="title function_">vmprint</span><span class="params">(<span class="type">pagetable_t</span> pagetable)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(level &gt; <span class="number">3</span>) <span class="keyword">return</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span>(level == <span class="number">1</span>)</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;page table %p\n&quot;</span>, pagetable);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">512</span>; i++)&#123;</span><br><span class="line">        <span class="type">pte_t</span> pte = pagetable[i];</span><br><span class="line">        <span class="keyword">if</span>(pte &amp; PTE_V)&#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="type">int</span> j = <span class="number">0</span>; j &lt; level; j++)&#123;</span><br><span class="line">                <span class="built_in">printf</span>(<span class="string">&quot;..&quot;</span>);</span><br><span class="line">                <span class="keyword">if</span>(j != level - <span class="number">1</span>) <span class="built_in">printf</span>(<span class="string">&quot; &quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            uint64 child = PTE2PA(pte);</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;%d: pte %p pa %p\n&quot;</span>, i, pte, child);</span><br><span class="line">            level++;</span><br><span class="line">            vmprint((<span class="type">pagetable_t</span>)child);</span><br><span class="line">            level--;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="detecting-which-pages-have-been-accessed">3 Detecting whichpages have been accessed</h2><p><u>任务描述</u>：检测页表是否被访问，实现<code>pgaccess</code>系统调用。</p><p><u>思路</u>：通过<code>walk</code>函数找到虚拟地址对应的<code>pte</code>，检查<code>PTE_A</code>位即可。</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// sysproc.c</span></span><br><span class="line"><span class="type">int</span></span><br><span class="line"><span class="title function_">sys_pgaccess</span><span class="params">(<span class="type">void</span>)</span>&#123;</span><br><span class="line">    uint64 base;</span><br><span class="line">    <span class="type">int</span> len;</span><br><span class="line">    uint64 mask;</span><br><span class="line">    <span class="keyword">if</span>(argaddr(<span class="number">0</span>, &amp;base) &lt; <span class="number">0</span> || argint(<span class="number">1</span>, &amp;len) &lt; <span class="number">0</span> || argaddr(<span class="number">2</span>, &amp;mask) &lt; <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    </span><br><span class="line">    uint64 start = PGROUNDDOWN(base);</span><br><span class="line">    uint64 bitmask = <span class="number">0L</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">0</span>; i &lt; len; i++, start += PGSIZE)&#123;</span><br><span class="line">        <span class="type">pte_t</span> *pte = walk(myproc()-&gt;pagetable, start, <span class="number">0</span>);</span><br><span class="line">        <span class="keyword">if</span>(pte == <span class="number">0</span>) <span class="keyword">return</span> <span class="number">-1</span>; <span class="comment">// page not map</span></span><br><span class="line">        uint64 flag = (*pte &amp; PTE_A) &gt;&gt; <span class="number">6</span>;</span><br><span class="line">        <span class="keyword">if</span>(flag)&#123;</span><br><span class="line">            *pte ^= PTE_A; <span class="comment">// clear the PTE_A</span></span><br><span class="line">        &#125;</span><br><span class="line">        bitmask |= (flag &lt;&lt; i);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(copyout(myproc()-&gt;pagetable, mask, (<span class="type">char</span> *)&amp;bitmask, <span class="keyword">sizeof</span>(uint64)) &lt; <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><blockquote><p>:zap:访问页表时将<code>PTE_A</code>置1的工作由RISC-V硬件做了，在代码中不需要自己设置。</p></blockquote>]]></content:encoded>
+      
+      
+      <category domain="http://example.com/categories/6-S081-OS-Labs/">6.S081 OS Labs</category>
+      
+      
+      <category domain="http://example.com/tags/6-S081/">6.S081</category>
+      
+      
+      <comments>http://example.com/2022/12/27/lab3/#disqus_thread</comments>
+      
+    </item>
+    
+    <item>
+      <title>编译原理-Lab4</title>
+      <link>http://example.com/2022/12/22/compilation-principle-lab4/</link>
+      <guid>http://example.com/2022/12/22/compilation-principle-lab4/</guid>
+      <pubDate>Wed, 21 Dec 2022 16:00:00 GMT</pubDate>
+      
+        
+        
+      <description>&lt;h1 id=&quot;编译原理lab4&quot;&gt;编译原理Lab4&lt;/h1&gt;
+&lt;h2 id=&quot;实验过程&quot;&gt;实验过程&lt;/h2&gt;
+&lt;p&gt;总的来说，本次实验比较简单，只要弄清楚&lt;code&gt;LLVM&lt;/code&gt;的&lt;code&gt;API&lt;/code&gt;如何使用即可，核心在于编写&lt;code&gt;MyVisit</description>
+        
+      
+      
+      
+      <content:encoded><![CDATA[<h1 id="编译原理lab4">编译原理Lab4</h1><h2 id="实验过程">实验过程</h2><p>总的来说，本次实验比较简单，只要弄清楚<code>LLVM</code>的<code>API</code>如何使用即可，核心在于编写<code>MyVisitor</code>类。</p><p>由于本次实验只涉及<code>main</code>函数以及<code>return</code>语句，并且<code>return</code>语句中的表达式都是由<code>INTEGR_CONST</code>组成，所以只需要重写函数定义、返回语句、运算表达式以及数字这几个<code>visitor</code>函数即可。整体的逻辑比较简单，这里不做详细描述。</p><h2 id="遭遇的问题">遭遇的问题</h2><p>==关于如何找到正确API==：可以写一个包含想要寻找的操作的<code>.c</code>文件，用<code>clang</code>编译成<code>.ll</code>，从中找到<code>API</code>的大致名称。比如我在写<code>%</code>运算的时候，就是通过这种方法找到<code>srem</code>操作对应的<code>API</code>。</p><p>==关于导入依赖的报错==：导了一晚上的包，最后发现有关<code>linux</code>的包还是没有导入。经过搜索后，加入阿里云镜像，并且对<code>maven</code>的<code>import</code>进行配置，得以解决。</p>]]></content:encoded>
+      
+      
+      <category domain="http://example.com/categories/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/">编译原理</category>
+      
+      
+      <category domain="http://example.com/tags/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/">编译原理</category>
+      
+      
+      <comments>http://example.com/2022/12/22/compilation-principle-lab4/#disqus_thread</comments>
+      
+    </item>
     
     <item>
       <title>操作系统-Lab4</title>
@@ -66,32 +122,6 @@ href=&quot;http://47.122.3.40:8081/#/lab3-type-and-rename/lab3-type-and-rename&q
       
       
       <comments>http://example.com/2022/12/13/compilation-principle-lab3/#disqus_thread</comments>
-      
-    </item>
-    
-    <item>
-      <title>记录一次虚拟机迁移</title>
-      <link>http://example.com/2022/12/13/record-1/</link>
-      <guid>http://example.com/2022/12/13/record-1/</guid>
-      <pubDate>Mon, 12 Dec 2022 16:00:00 GMT</pubDate>
-      
-        
-        
-      <description>&lt;figure&gt;
-&lt;img
-src=&quot;https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221213174727464.png&quot;
-alt=&quot;旧机&quot; /&gt;
-&lt;figcap</description>
-        
-      
-      
-      
-      <content:encoded><![CDATA[<figure><imgsrc="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221213174727464.png"alt="旧机" /><figcaption aria-hidden="true">旧机</figcaption></figure><figure><imgsrc="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221213174841083.png"alt="新机" /><figcaption aria-hidden="true">新机</figcaption></figure>]]></content:encoded>
-      
-      
-      
-      
-      <comments>http://example.com/2022/12/13/record-1/#disqus_thread</comments>
       
     </item>
     
@@ -268,34 +298,6 @@ src=&quot;https://my-picture-repo.obs.cn-eas</description>
       
       
       <comments>http://example.com/2022/11/08/JavaScript%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B/#disqus_thread</comments>
-      
-    </item>
-    
-    <item>
-      <title>pointer networks</title>
-      <link>http://example.com/2022/11/07/pointer-networks/</link>
-      <guid>http://example.com/2022/11/07/pointer-networks/</guid>
-      <pubDate>Mon, 07 Nov 2022 10:32:19 GMT</pubDate>
-      
-        
-        
-      <description>&lt;p&gt;&lt;a href=&quot;https://arxiv.org/abs/1506.03134&quot;&gt;Pointer
-Networks&lt;/a&gt;提出了一种新的 neural
-architecture，可以解决输出序列的大小随着输入序列的大小而变化的问题。文章开头讲到，传统的seq2seq</description>
-        
-      
-      
-      
-      <content:encoded><![CDATA[<p><a href="https://arxiv.org/abs/1506.03134">PointerNetworks</a>提出了一种新的 neuralarchitecture，可以解决输出序列的大小随着输入序列的大小而变化的问题。文章开头讲到，传统的seq2seq模型以及AttentionMechanism，都只能处理固定size的输入序列。下面主要围绕这PointerNetwork展开学习。</p><p>首先需要回顾 seq2seq 模型 和 Attention 机制</p><h2 id="seq2seq-model">1 Seq2Seq Model</h2><p>传统的 seq2seq model 是由两个 RNN 构成，一个作为 Encoder ，另一个作为Decoder。在输入 input sequence后，由Encoder进行处理，形成一个 EncoderVector 送到 Decoder，由 Decoder 产生最终结果。</p><p><imgsrc="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221115155058693.png" /></p><blockquote><p><ahref="https://towardsdatascience.com/understanding-encoder-decoder-sequence-to-sequence-model-679e04af4346">UnderstandingEncoder-Decoder Sequence to Sequence Model</a></p></blockquote><ol type="1"><li>Encoder 部分由 若干个 RNN 单元构成，每个单元接受前一个单元的 hiddenstate 和当前 input sequence 中的输入元素，生成新的 hidden state并且向前传递。<spanclass="math inline">\(h_{i}\)</span>表示前面所有输入信息的 hiddenstate，计算公式为 <span class="math inline">\(h_{t} = f(W^{hh}h_{t-1} +W^{hx}x_{t})\)</span></li><li>Encoder Vector是Encoder部分的输出，也是最后一个 hiddenstate，并作为Decoder部分的初始hidden state输入Decoder。</li><li>Decoder 部分同样由若干个 RNN 单元构成，每个单元接受前一个单元的hidden state，生成当前状态下的 hidden state，并预测当前的输出。hiddenstate的公式为：<span class="math inline">\(h_{t} =f(W^{hh}h_{t-1})\)</span>，预测输出的公式为：<spanclass="math inline">\(y_{t} = softmax(W^{s}h_{t})\)</span></li></ol><p>seq2seq模型的一个很重要的好处在于 input sequence 和 output sequence的大小可以不一致。</p><p>但是seq2seq不能处理 output dictionary的大小会发生变化的任务，因为seq2seq处理一项特定的任务时，其 outputdictionary 是不会发生变化的，是一个相对固定的域，但是在<ahref="https://arxiv.org/abs/1506.03134">PointerNetworks</a>文章中所提到的闭包问题等组合相关问题，它们的 outputdictionary 是和 input sequence 密切相关的。比如，给定10个点 {<spanclass="math inline">\(P_{1}, P_{2}, ...,P_{10}\)</span>}，要找到一个闭包，那结果肯定是这10个点的子集；如果换10个点，那结果就应该是新的10个点的子集。</p><blockquote><p><ahref="https://kierszbaumsamuel.medium.com/pointer-networks-what-are-they-c3cb68fae076">Pointernetworks : What are they?</a></p></blockquote><h2 id="with-attention">2 with Attention</h2><p>上面提到了，seq2seq模型的Encoder部分将inputsequence转换成一个vector，也叫context，Decoder根据这个context做输出预测。这样的话，这个contextvector就成为模型性能的瓶颈了，模型输出结果的正确性取决于这个contextvector能多好地表达input sequence。</p><p>引入Attention机制，使得模型专注在input sequence的相关部分。</p><p>Attention机制主要在两个地方做了改进</p><ol type="1"><li><p>给Decoder部分传递<strong>所有的 hidden state</strong>，而不是一个context vector。</p></li><li><p>在Decoder的每一步，为所有的 hidden state 打分，用 softmax后的分数乘上对应的 hidden state，然后加和形成<strong>这一步的 contextvector</strong>。之后，得到的 context vector 和 Decoder hidden state做连接，得到新的 vector 传递给 <strong>feedforward neuralnetwork</strong>，最后得到该步的输出。</p><p><imgsrc="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221115173050556.png" /></p></li></ol><p><strong>完整步骤</strong></p><p><imgsrc="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221115190841720.png" /></p><blockquote><p><ahref="http://jalammar.github.io/visualizing-neural-machine-translation-mechanics-of-seq2seq-models-with-attention/">VisualizingA Neural Machine Translation Model (Mechanics of Seq2seq Models WithAttention)</a></p></blockquote><p>然后我们看看论文中对于Attention机制给的公式</p><p><imgsrc="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221116134655019.png" /></p><ol type="1"><li>第①个公式相当于就是上面说的打分，得到的<spanclass="math inline">\(u_{j}^{i}\)</span>表示的是在 time-step 'i'时，对Encoder的第 j 个 hidden state 的打分。</li><li>第②个公式：使用 <span class="math inline">\(softmax\)</span>函数对打分进行处理。</li><li>第③个公式：将 <span class="math inline">\(softmax\)</span> 后的分数<span class="math inline">\(\times\)</span> Encoder的对应 hiddenstate，并加和算出这一步的 context vector。</li></ol><h2 id="pointer-networks">3 Pointer Networks</h2><p>而 Pointer Network 所做的改变就是，<strong>在 <spanclass="math inline">\(softmax\)</span> 函数处理完打分后，选择其中最大权重 的元素直接作为该步的输出</strong>。</p><p><imgsrc="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221116135652884.png" /></p><p>如图，第一个时间步的输出是 "1"，那么在下一个时间步，输入<spanclass="math inline">\([x_1,y_1]\)</span>的相应token和上一个时间步的hidden state 会被传递给网络以计算当前的 hidden state。</p><p><imgsrc="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-note-imgs/image-20221116141433610.png" /></p><p>这样就使得输出序列完全取决于输入序列，所以可以很好适应输入序列大小的变化。</p><h2 id="ptr的应用">4 Ptr的应用</h2><h3 id="abstractive-text-summarization">abstractive textsummarization</h3><p>首先<code>text summarization</code>分为<code>extractive</code>和<code>abstractive</code>两种，<code>extractive</code>是指通过选择和重组原文中的句子或短语形成的<code>summarization</code>，而<code>abstractive</code>是指更高级的概括，会产生全新的词语，像人写<code>abstract</code>那样。</p><p><a href="https://arxiv.org/abs/1704.04368">Get To The Point:Summarization with Pointer-GeneratorNetworks</a>介绍了一种<code>hybrid pointer-generator network</code>+<code>coverage mechanism</code>的架构来处理这一任务，可以很好地解决：①不能准确再现细节；②不能处理超出词汇表以外的单词；③出现重复。其中<code>hybrid pointer-generator network</code>主要解决①②，而<code>coverage mechanism</code>解决③。</p><p><imgsrc="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221118003614644.png" /></p><p>上图主要是<code>hybrid pointer-generator network</code>的结构。之所以是<code>hybrid</code>，是因为这里不是单纯使用<code>pointer</code>，而是将<code>pointer</code>和原先<code>seq2seq-with-attention</code>结合起来的。从图中我们可看到有两个<code>distribution</code>，一个是<code>attention distribution</code>，它就是<code>pointer network</code>中的<code>pointer</code>，反应的是<code>source text</code>中的分布；另一个是<code>vocabulary distribution</code>，这个就是正常<code>seq2seq</code>模型会产生的针对<code>output dictionary</code>的分布。这两个分布是通过<spanclass="math inline">\(p_{gen}\)</span>结合起来的，最后形成一个总的<code>distribution</code>，由此产生结果。</p><p>而<code>coverage mechanism</code>则是插入在产生<code>attention distribution</code>的步骤中，因为它是用来反映<code>source text</code>中单词在结果中的覆盖程度，通过将它加入<code>attention distribution</code>的计算中，起到一个反馈的作用，从而有效减少重复问题。（下式红框部分就是<code>coverage vector</code>作为额外输入传递给<code>attention</code>机制的计算中）</p><p><imgsrc="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221118004630172.png" /></p>]]></content:encoded>
-      
-      
-      <category domain="http://example.com/categories/NLP/">NLP</category>
-      
-      
-      <category domain="http://example.com/tags/NLP/">NLP</category>
-      
-      
-      <comments>http://example.com/2022/11/07/pointer-networks/#disqus_thread</comments>
       
     </item>
     

@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"manual","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="##一、图论基础 1、图的表示 图可以分为：  有向无权图 有向有权图 无向无权图 无向有权图  1.1、邻接表 对于邻接表来说  有向&#x2F;无向：没有影响，在相应结点的邻居结点表中增减即可 有权&#x2F;无权：对结构有一定影响。 有权：List&lt;int[]&gt;[] graph 其中List中的int[]放两个值，一个是结点值，一个是权重  1234567List&amp;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="刷题笔记6-图论">
+<meta property="og:url" content="http://example.com/2022/10/15/%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B06%EF%BC%88%E5%9B%BE%E8%AE%BA%EF%BC%89/index.html">
+<meta property="og:site_name" content="ICDE">
+<meta property="og:description" content="##一、图论基础 1、图的表示 图可以分为：  有向无权图 有向有权图 无向无权图 无向有权图  1.1、邻接表 对于邻接表来说  有向&#x2F;无向：没有影响，在相应结点的邻居结点表中增减即可 有权&#x2F;无权：对结构有一定影响。 有权：List&lt;int[]&gt;[] graph 其中List中的int[]放两个值，一个是结点值，一个是权重  1234567List&amp;">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-10-14T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-01-10T04:10:07.521Z">
+<meta property="article:author" content="zhc">
+<meta property="article:tag" content="leetcode">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2022/10/15/%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B06%EF%BC%88%E5%9B%BE%E8%AE%BA%EF%BC%89/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>刷题笔记6-图论 | ICDE</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/rss2.xml" title="ICDE" type="application/rss+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+      <a target="_blank" rel="noopener" href="https://github.com/zhc-njdx" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">ICDE</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">i can do everything.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/10/15/%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B06%EF%BC%88%E5%9B%BE%E8%AE%BA%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="zhc">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ICDE">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          刷题笔记6-图论
+        </h1>
+
+        <div class="post-meta">
+
+        
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-10-15 00:00:00" itemprop="dateCreated datePublished" datetime="2022-10-15T00:00:00+08:00">2022-10-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-01-10 12:10:07" itemprop="dateModified" datetime="2023-01-10T12:10:07+08:00">2023-01-10</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/leetcode%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">leetcode刷题笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span><br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>11k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>10 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>##一、图论基础</p>
+<h3 id="图的表示">1、图的表示</h3>
+<p>图可以分为：</p>
+<ul>
+<li>有向无权图</li>
+<li>有向有权图</li>
+<li>无向无权图</li>
+<li>无向有权图</li>
+</ul>
+<h4 id="邻接表">1.1、邻接表</h4>
+<p>对于邻接表来说</p>
+<ul>
+<li><p>有向/无向：没有影响，在相应结点的邻居结点表中增减即可</p></li>
+<li><p>有权/无权：对结构有一定影响。</p>
+<p>有权：<code>List&lt;int[]&gt;[] graph</code>
+其中<code>List</code>中的<code>int[]</code>放两个值，一个是结点值，一个是权重</p></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Integer&gt;[] graph; <span class="comment">// int[][] 结构也可</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; graph.length; i++)&#123; <span class="comment">// 遍历结点</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">0</span>; j &lt; graph[i].length; j++)&#123; <span class="comment">// 遍历每个结点的邻居结点</span></span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="邻接矩阵">1.2、邻接矩阵</h4>
+<p>对于临界矩阵来说</p>
+<ul>
+<li>有向/无向：遍历矩阵的【右上角】和【全部】的区别</li>
+<li>有权/无权：矩阵中的值是<code>0/int</code>和<code>0/1</code>的区别</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span>[][] graph; <span class="comment">// n*n的矩阵</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> graph.length;</span><br><span class="line"><span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; n; i++)&#123; <span class="comment">// 遍历起始节点</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> i + <span class="number">1</span>; j &lt; n; j++)&#123; <span class="comment">// 遍历终止结点</span></span><br><span class="line">        graph[i][j] <span class="comment">// 1表示存在从i结点到j结点的路径</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="图的遍历">2、图的遍历</h3>
+<p>图的遍历一般程度上可以理解为多叉树的遍历，但是需要注意【环的存在】</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">boolean</span> visited; <span class="comment">// 记录结点是否已经访问过</span></span><br><span class="line">List&lt;Integer&gt; path; <span class="comment">// 记录一条路径</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">traversal</span><span class="params">(Graph graph, <span class="type">int</span> s)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(visited[s])&#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    visited[s] = <span class="literal">true</span>;</span><br><span class="line">    path.add(s);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> neighbor : graph.neighbors(s))&#123;</span><br><span class="line">        traversal(graph, neighbor);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 回溯</span></span><br><span class="line">    path.remove(<span class="keyword">new</span> <span class="title class_">Integer</span>(s));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="例题">3、例题</h3>
+<p>【797. 所有可能的路径】</p>
+<blockquote>
+<p>给你一个有 n 个节点的 有向无环图（DAG），请你找出所有从节点 0 到节点
+n-1 的路径并输出（不要求按特定顺序）</p>
+<p>graph[i] 是一个从节点 i 可以访问的所有节点的列表（即从节点 i 到节点
+graph[i][j]存在一条有向边）。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">List&lt;List&lt;Integer&gt;&gt; paths;</span><br><span class="line">List&lt;Integer&gt; path;</span><br><span class="line"><span class="keyword">public</span> List&lt;List&lt;Integer&gt;&gt; <span class="title function_">allPathsSourceTarget</span><span class="params">(<span class="type">int</span>[][] graph)</span> &#123;</span><br><span class="line">    paths = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">    path = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">    </span><br><span class="line">    traversal(graph, <span class="number">0</span>, graph.length - <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">return</span> paths;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">traversal</span><span class="params">(<span class="type">int</span>[][] graph, <span class="type">int</span> begin, <span class="type">int</span> end)</span>&#123;</span><br><span class="line">    path.add(begin);</span><br><span class="line">    <span class="keyword">if</span>(begin == end) &#123;</span><br><span class="line">        paths.add(<span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;(path));</span><br><span class="line">        path.remove(<span class="keyword">new</span> <span class="title class_">Integer</span>(begin));</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; graph[begin].length; i++)&#123;</span><br><span class="line">        traversal(graph, graph[begin][i], end);</span><br><span class="line">    &#125;</span><br><span class="line">    path.remove(<span class="keyword">new</span> <span class="title class_">Integer</span>(begin));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="二拓扑排序">二、拓扑排序</h2>
+<h3 id="图的生成与遍历">0、图的生成与遍历</h3>
+<p>给定图的结点数<code>n</code>，以及结点之间的依赖关系<code>dependency</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">	n(int) 节点数</span></span><br><span class="line"><span class="comment">	dependency(int[][]) 结点之间依赖关系 dependency[i]是一个[from, to]的二元数组</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">private</span> List&lt;Integer&gt;[] buildGraph(<span class="type">int</span> n, <span class="type">int</span>[][] dependency)&#123;</span><br><span class="line">    List&lt;Integer&gt;[] graph = <span class="keyword">new</span> <span class="title class_">List</span>[n];</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; n; i++)&#123;</span><br><span class="line">        graph[i] = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span>[] pair : dependency)&#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">from</span> <span class="operator">=</span> pair[<span class="number">0</span>];</span><br><span class="line">        <span class="type">int</span> <span class="variable">to</span> <span class="operator">=</span> pair[<span class="number">1</span>];</span><br><span class="line">        graph[from].add(to);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> graph;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="判断是否存在环">1、判断是否存在环</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">boolean</span>[] visited;</span><br><span class="line"><span class="type">boolean</span>[] onPath;</span><br><span class="line"><span class="type">boolean</span> isCycle;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">traversal</span><span class="params">(<span class="type">int</span>[][] graph, <span class="type">int</span> s)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(onPath[s])&#123;</span><br><span class="line">        isCycle = <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(visited[s])&#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    visited[s] = <span class="literal">true</span>;</span><br><span class="line">    onPath[s] = <span class="literal">true</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> neighbor : graph[s])&#123;</span><br><span class="line">        traversal(graph, neighbor);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    onPath[s] = <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="拓扑序列">2、拓扑序列</h3>
+<p>如果图G中不存在环，G中所有顶点排成一个线性序列，使得图中任意一对顶点u和v，若边&lt;u,v&gt;∈E(G)，则u在线性序列中出现在v之前。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 改造一下traversal函数</span></span><br><span class="line"><span class="type">boolean</span>[] visited;</span><br><span class="line"><span class="type">boolean</span>[] onPath;</span><br><span class="line"><span class="type">boolean</span> isCycle;</span><br><span class="line"></span><br><span class="line">List&lt;Integer&gt; postOrder;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">traversal</span><span class="params">(<span class="type">int</span>[][] graph, <span class="type">int</span> s)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(onPath[s])&#123;</span><br><span class="line">        isCycle = <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(visited[s])&#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    onPath[s] = <span class="literal">true</span>;</span><br><span class="line">    visited[s] = <span class="literal">true</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span>[] neighbor : graph[s])&#123;</span><br><span class="line">        traversal(graph, s);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    onPath[s] = <span class="literal">false</span>;</span><br><span class="line">    postOrder.add(s);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 最后再将postOrder逆序得到就是结果</span></span><br></pre></td></tr></table></figure>
+<p>【重点理解：为什么图的后序遍历就是拓扑排序】</p>
+<p>如果图中不存在环，那么图就可以看成是一颗多叉树，如图。</p>
+<figure>
+<img
+src="https://my-picture-repo.obs.cn-east-3.myhuaweicloud.com/my-blog-imgs/image-20221029210620536.png"
+alt="image-20221029210620536" />
+<figcaption aria-hidden="true">image-20221029210620536</figcaption>
+</figure>
+<p>那么从结点<code>0</code>开始的后序遍历的序列之一就是<code>[7,9,16,11, |  6,10,8,19,2, |  3,4,5, |  0]</code></p>
+<p>其实就是从最底层到最高层的排列。</p>
+<p><strong>它满足了<code>from</code>结点都在<code>to</code>结点的后面</strong>（所以最后结果需要逆序，使from结点在前面）</p>
+<p>【局部 ==》全局】</p>
+<p>而这只是这个图的一部分，可以把这部分抽象成一个结点<strong><code>S</code></strong>，那么同样使用前面的函数，在得到的遍历结果中，图中直接指向或者间接指向<strong><code>S</code></strong>的结点都会在其后面，逆序之后就在前面，所以得出的结果就是正确的。</p>
+<p>（同时在xi'jie'shang<code>visited</code>和<code>onPath</code>数组保证结点只被遍历一次以及不会出现环）</p>
+<h2 id="三二分图">三、二分图</h2>
+<blockquote>
+<p>二分图：直观的理解就是能够用两种颜色给一张图上色，使得每条边两端的结点颜色不同</p>
+</blockquote>
+<h3 id="判断二分图">【判断二分图】</h3>
+<p>思路：一边遍历，一边给图上色</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">boolean</span>[] visited; <span class="comment">// 记录结点是否被访问</span></span><br><span class="line"><span class="type">boolean</span>[] color; <span class="comment">// 记录结点的颜色 true 和 false 两种</span></span><br><span class="line"><span class="type">boolean</span> <span class="variable">isBinary</span> <span class="operator">=</span> <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">isBipartite</span><span class="params">(<span class="type">int</span>[][] graph)</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> graph.length; <span class="comment">// 结点数</span></span><br><span class="line">    visited = <span class="keyword">new</span> <span class="title class_">boolean</span>[n];</span><br><span class="line">    color = <span class="keyword">new</span> <span class="title class_">boolean</span>[n];</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; n; i++)&#123;</span><br><span class="line">        <span class="keyword">if</span>(!visited[i])</span><br><span class="line">        	traversal(graph, i); <span class="comment">// 遍历不同的liang</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> isBinary;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 这里的 color 被new了之后每一个值都是 false 也就成了默认的颜色，只需要去改变对应结点的颜色即可</span></span><br><span class="line"><span class="comment">* 由于这里的图是无向图，所以traversal一个结点就是遍历这个连通分支</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">traversal</span><span class="params">(<span class="type">int</span>[][] graph, <span class="type">int</span> v)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(!isBinary) <span class="keyword">return</span>;</span><br><span class="line">    </span><br><span class="line">    visited[v] = <span class="literal">true</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> w : graph[v])&#123;</span><br><span class="line">        <span class="keyword">if</span>(!visited[w])&#123;</span><br><span class="line">            color[w] = !color[v];</span><br><span class="line">            traversal(graph, w);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">if</span>(color[w] == color[v])&#123;</span><br><span class="line">                isBinary = <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="四union-find-算法">四、Union-Find 算法</h2>
+<h3 id="union-find的算法思想">1、union-find的算法思想</h3>
+<ul>
+<li>基本思想：用下标代替实际的结点，parent数组存储父结点，这样就可以较为快速的实现【合并】和【判断是否相连】的操作</li>
+<li>进阶思想：无论是 union 操作还是 connected 操作，其复杂度的局限都在于
+find
+函数，即从一个结点找到根节点的过程，如果这个结点距离结点越近，复杂度越低。而结点与根节点的距离一方面取决于
+union
+时的插入方式，如果插入不当，就可能形成链式的连通分量，复杂度是最高的，我们希望尽量降低树的高度，可以在
+union 中采取 【小树插大树】的方式，使得树的高度尽可能的小。</li>
+<li>路径压缩：在 find
+过程中，在从当前结点向上寻找的过程中，不断的压缩路径（将该结点连到其父结点的父结点上），使得树的高度始终维持在常数复杂度。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UnionFind</span> &#123;</span><br><span class="line">    <span class="type">int</span> count; <span class="comment">// 连通分量个数</span></span><br><span class="line">    <span class="type">int</span>[] parent; <span class="comment">// 结点的父节点</span></span><br><span class="line">    <span class="type">int</span>[] size; <span class="comment">// 该节点所处连通分量的结点数</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">UnionFind</span><span class="params">(<span class="type">int</span> n)</span>&#123;</span><br><span class="line">        <span class="built_in">this</span>.count = n;</span><br><span class="line">        parent = <span class="keyword">new</span> <span class="title class_">int</span>[n];</span><br><span class="line">        size = <span class="keyword">new</span> <span class="title class_">int</span>[n];</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; n; i++)&#123;</span><br><span class="line">            parent[i] = i;</span><br><span class="line">            size[i] = <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">union</span><span class="params">(<span class="type">int</span> p, <span class="type">int</span> q)</span>&#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">rootP</span> <span class="operator">=</span> find(p);</span><br><span class="line">        <span class="type">int</span> <span class="variable">rootQ</span> <span class="operator">=</span> find(q);</span><br><span class="line">        <span class="keyword">if</span>(rootP == rootQ)&#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        * 小树插到大树上，保持树的平衡 维持 logN 的时间复杂度</span></span><br><span class="line"><span class="comment">        * */</span></span><br><span class="line">        <span class="keyword">if</span>(size[rootP] &gt; size[rootQ])&#123;</span><br><span class="line">            parent[rootQ] = rootP;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            parent[rootP] = rootQ;</span><br><span class="line">        &#125;</span><br><span class="line">        size[rootP] += size[rootQ];</span><br><span class="line">        size[rootQ] += size[rootP];</span><br><span class="line">        count--;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">connected</span><span class="params">(<span class="type">int</span> p, <span class="type">int</span> q)</span>&#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">rootP</span> <span class="operator">=</span> find(p);</span><br><span class="line">        <span class="type">int</span> <span class="variable">rootQ</span> <span class="operator">=</span> find(q);</span><br><span class="line">        <span class="keyword">return</span> rootP == rootQ;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> <span class="title function_">find</span><span class="params">(<span class="type">int</span> p)</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(p &gt;= parent.length) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span> (parent[p] != p)&#123;</span><br><span class="line">            parent[p] = parent[parent[p]]; <span class="comment">// 路径压缩 使得所有非根结点都直接连接在根上 使树高维持在2</span></span><br><span class="line">            p = parent[p];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> p;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">count</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> count;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="union-find算法的应用">2、Union-Find算法的应用</h3>
+<h4 id="被围绕的区域">2.1、130. 被围绕的区域</h4>
+<blockquote>
+<p>给你一个 <code>m x n</code> 的矩阵 <code>board</code> ，由若干字符
+<code>'X'</code> 和 <code>'O'</code> ，找到所有被 <code>'X'</code>
+围绕的区域，并将这些区域里所有的 <code>'O'</code> 用 <code>'X'</code>
+填充。</p>
+</blockquote>
+<p>这道题其实使用DFS算法可以很好地解决，但是也是可以体现Union-Find算法思想的一道题目</p>
+<p><strong>加深对于DFS算法的理解</strong></p>
+<p>DFS算法是深度优先，在二叉树中体现为从根节点不断地向叶节点前进，在图中是体现为从一个结点不断地向其邻居结点前进。</p>
+<p>其实在这道题中，把这个矩阵理解为一副图的话，DFS就显得比较自然了</p>
+<p>1、遍历矩阵的四周，如果是<code>'O'</code>，则进入<code>dfs</code>，将所有与其相连的<code>'O'</code>变成特殊符号</p>
+<p>2、遍历矩阵，将特殊符号变回<code>'O'</code>，把<code>'O'</code>变成<code>'X'</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用 DFS 解决</span></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    x x x x</span></span><br><span class="line"><span class="comment">    x o x o</span></span><br><span class="line"><span class="comment">    x o o x</span></span><br><span class="line"><span class="comment">    o x x o</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">    [要深入理解 dfs 的内涵]</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">    边界坐标的特点: [0/m-1][0/n-1]</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="type">int</span> m;</span><br><span class="line">    <span class="type">int</span> n;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">dfs</span><span class="params">(<span class="type">char</span>[][] board)</span>&#123;</span><br><span class="line">        m = board.length;</span><br><span class="line">        n = board[<span class="number">0</span>].length;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 遍历board的四条边</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>, j = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">do</span> &#123;</span><br><span class="line">            <span class="keyword">if</span>(board[i][j] == <span class="string">&#x27;O&#x27;</span>)&#123;</span><br><span class="line">                dfsHelper(board, i, j);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="type">int</span>[] next = forward(i,j);</span><br><span class="line">            i = next[<span class="number">0</span>];</span><br><span class="line">            j = next[<span class="number">1</span>];</span><br><span class="line">        &#125; <span class="keyword">while</span> (i &gt; <span class="number">0</span>  || j &gt; <span class="number">0</span>); <span class="comment">// ① 考虑到 forward 函数会返回 &#123;-1, -1&#125; 所以要改成 &gt;0</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 遍历整个board 把 &#x27;O&#x27; 换成 &#x27;X&#x27; 把 &#x27;#&#x27; 换成 &#x27;O&#x27;</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">0</span>; a &lt; m; a++)&#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">b</span> <span class="operator">=</span> <span class="number">0</span>; b &lt; n; b++)&#123;</span><br><span class="line">                <span class="keyword">if</span> (board[a][b] == <span class="string">&#x27;O&#x27;</span>) board[a][b] = <span class="string">&#x27;X&#x27;</span>;</span><br><span class="line">                <span class="keyword">if</span> (board[a][b] == <span class="string">&#x27;#&#x27;</span>) board[a][b] = <span class="string">&#x27;O&#x27;</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">    * 这里的 DFS 就有些不同于 树的 DFS</span></span><br><span class="line"><span class="comment">    * DFS: 只处理一个结点，然后用递归向四周扩散深入</span></span><br><span class="line"><span class="comment">    * */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">dfsHelper</span><span class="params">(<span class="type">char</span>[][] board, <span class="type">int</span> x, <span class="type">int</span> y)</span>&#123;</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">        这里要改成 != &#x27;O&#x27; 而不是 == &#x27;X&#x27;</span></span><br><span class="line"><span class="comment">        != &#x27;O&#x27; 针对的是两种情况 == &#x27;X&#x27; 和 == &#x27;#&#x27;</span></span><br><span class="line"><span class="comment">        == &#x27;X&#x27; 肯定是直接 return</span></span><br><span class="line"><span class="comment">        == &#x27;#&#x27; 的情况，其实也可以return 因为这个 &#x27;#&#x27; 周围的格子已经被遍历过了 (在其从&#x27;O&#x27;变成&#x27;#&#x27;之后)</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">if</span>(board[x][y] != <span class="string">&#x27;O&#x27;</span>) <span class="keyword">return</span>;</span><br><span class="line">        <span class="keyword">if</span>(board[x][y] == <span class="string">&#x27;O&#x27;</span>) board[x][y] = <span class="string">&#x27;#&#x27;</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (x &gt; <span class="number">0</span>) dfsHelper(board, x - <span class="number">1</span>, y); <span class="comment">// 上</span></span><br><span class="line">        <span class="keyword">if</span> (x &lt; m - <span class="number">1</span>) dfsHelper(board, x + <span class="number">1</span>, y); <span class="comment">// 下</span></span><br><span class="line">        <span class="keyword">if</span> (y &gt; <span class="number">0</span>) dfsHelper(board, x, y - <span class="number">1</span>); <span class="comment">// 左</span></span><br><span class="line">        <span class="keyword">if</span> (y &lt; n - <span class="number">1</span>) dfsHelper(board, x, y + <span class="number">1</span>); <span class="comment">// 右</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 在board的四个边上前进</span></span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span>[] forward(<span class="type">int</span> i , <span class="type">int</span> j)&#123;</span><br><span class="line">        <span class="keyword">if</span> (i == <span class="number">0</span> &amp;&amp; j &lt; n - <span class="number">1</span>) <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">int</span>[]&#123;i, j + <span class="number">1</span>&#125;; <span class="comment">// 上 向右走</span></span><br><span class="line">        <span class="keyword">if</span> (j == n - <span class="number">1</span> &amp;&amp; i &lt; m - <span class="number">1</span>) <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">int</span>[]&#123;i + <span class="number">1</span>, j&#125;; <span class="comment">// 右 向下走</span></span><br><span class="line">        <span class="keyword">if</span> (i == m - <span class="number">1</span> &amp;&amp; j &gt; <span class="number">0</span>) <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">int</span>[]&#123;i, j - <span class="number">1</span>&#125;; <span class="comment">// 下 向左走</span></span><br><span class="line">        <span class="keyword">if</span> (j == <span class="number">0</span> &amp;&amp; i &gt; <span class="number">0</span>) <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">int</span>[]&#123;i - <span class="number">1</span>, j&#125;; <span class="comment">// 左 向上走</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">int</span>[]&#123;-<span class="number">1</span>, -<span class="number">1</span>&#125;;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p><strong>这道题也是很好的体现，Union-Find的思想在二位数组（矩阵）中判断连通性的例子</strong></p>
+<ul>
+<li>根据题意知道：在矩阵的<code>'O'</code>及与其相连的<code>'O'</code>是属于不被替换的<code>'O'</code>，可以算作一个连通分量。<strong>【利用一个dummy结点和它们相连】</strong>，为什么再找一个dummy结点呢？方便查找。在后续判断这个<code>'O'</code>是否需要被替换时，只需要判断是否和这个dummy结点连通即可。</li>
+<li>遍历完四周之后，再次遍历即可完成替换。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用 union-find 解决</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">uf</span><span class="params">(<span class="type">char</span>[][] board)</span>&#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">m</span> <span class="operator">=</span> board.length;</span><br><span class="line">    <span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> board[<span class="number">0</span>].length;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 最后一个dummy作为 不被 &#x27;X&#x27; 替换的&#x27;O&#x27; 的联通分量中的一个结点 来寻找该连通分量中的其他结点</span></span><br><span class="line">    <span class="type">UnionFind</span> <span class="variable">uf</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">UnionFind</span>(n*m+<span class="number">1</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; m; i++)&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">0</span>; j &lt; n; j++)&#123;</span><br><span class="line">            </span><br><span class="line">            <span class="type">int</span> <span class="variable">val</span> <span class="operator">=</span> i * n + j; <span class="comment">// 二维数组转化为一维</span></span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 将矩阵四周的&#x27;O&#x27;和dummy连通</span></span><br><span class="line">            <span class="keyword">if</span>( (i == <span class="number">0</span> || i == m - <span class="number">1</span> || j == <span class="number">0</span> || j == n - <span class="number">1</span>) &amp;&amp;</span><br><span class="line">                        board[i][j] == <span class="string">&#x27;O&#x27;</span> )&#123;</span><br><span class="line">                uf.union(val, n*m);</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (board[i][j] == <span class="string">&#x27;O&#x27;</span>)&#123;</span><br><span class="line">                <span class="comment">// 上</span></span><br><span class="line">                <span class="keyword">if</span>(i &gt; <span class="number">0</span> &amp;&amp; board[i-<span class="number">1</span>][j] == <span class="string">&#x27;O&#x27;</span>) uf.union((i-<span class="number">1</span>)*n+j, val);</span><br><span class="line">                <span class="comment">// 下</span></span><br><span class="line">                <span class="keyword">if</span> (i &lt; m - <span class="number">1</span> &amp;&amp; board[i+<span class="number">1</span>][j] == <span class="string">&#x27;O&#x27;</span>) uf.union((i+<span class="number">1</span>)*n+j, val);</span><br><span class="line">                <span class="comment">// 左</span></span><br><span class="line">                <span class="keyword">if</span> (j &gt; <span class="number">0</span> &amp;&amp; board[i][j-<span class="number">1</span>] == <span class="string">&#x27;O&#x27;</span>) uf.union(i*n+(j-<span class="number">1</span>), val);</span><br><span class="line">                <span class="comment">// 右</span></span><br><span class="line">                <span class="keyword">if</span> (j &lt; n - <span class="number">1</span> &amp;&amp; board[i][j+<span class="number">1</span>] == <span class="string">&#x27;O&#x27;</span>) uf.union(i*n+(j+<span class="number">1</span>), val);</span><br><span class="line">                <span class="comment">/* </span></span><br><span class="line"><span class="comment">                // 如果不在能够连通分量中 则改成 X</span></span><br><span class="line"><span class="comment">                if (!uf.connected(val, n*m))&#123;</span></span><br><span class="line"><span class="comment">                    board[i][j] = &#x27;X&#x27;;</span></span><br><span class="line"><span class="comment">                &#125;</span></span><br><span class="line"><span class="comment">                 */</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; m; i++)&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">0</span>; j &lt; n; j++)&#123;</span><br><span class="line">            <span class="keyword">if</span>(board[i][j] == <span class="string">&#x27;O&#x27;</span> &amp;&amp; !uf.connected(i*n+j, n*m))&#123;</span><br><span class="line">                board[i][j] = <span class="string">&#x27;X&#x27;</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="等式方程的可满足性">2.2、990. 等式方程的可满足性</h4>
+<p>这道题就是典型需要利用Union-Find解决。相等和不相等就相当于连通和不连通，核心就是
+<code>union</code> 和 判断是否 <code>connected</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">equationsPossible</span><span class="params">(String[] equations)</span> &#123;</span><br><span class="line">    <span class="type">UnionFind</span> <span class="variable">uf</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">UnionFind</span>(<span class="number">26</span>);</span><br><span class="line">    <span class="keyword">for</span> (String equation : equations) &#123;</span><br><span class="line">        <span class="keyword">if</span>(equation.charAt(<span class="number">1</span>) == <span class="string">&#x27;!&#x27;</span>) <span class="keyword">continue</span>;</span><br><span class="line">        <span class="type">char</span> <span class="variable">c1</span> <span class="operator">=</span> equation.charAt(<span class="number">0</span>);</span><br><span class="line">        <span class="type">char</span> <span class="variable">c2</span> <span class="operator">=</span> equation.charAt(<span class="number">3</span>);</span><br><span class="line">        uf.union(c1-<span class="string">&#x27;a&#x27;</span>, c2-<span class="string">&#x27;a&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> (String equation : equations) &#123;</span><br><span class="line">        <span class="keyword">if</span> (equation.charAt(<span class="number">1</span>) == <span class="string">&#x27;=&#x27;</span>) <span class="keyword">continue</span>;</span><br><span class="line">        <span class="type">char</span> <span class="variable">c1</span> <span class="operator">=</span> equation.charAt(<span class="number">0</span>);</span><br><span class="line">        <span class="type">char</span> <span class="variable">c2</span> <span class="operator">=</span> equation.charAt(<span class="number">3</span>);</span><br><span class="line">        <span class="keyword">if</span>(uf.connected(c1-<span class="string">&#x27;a&#x27;</span>, c2-<span class="string">&#x27;a&#x27;</span>)) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="五最小生成树算法">五、最小生成树算法</h2>
+<h3 id="kruskal算法">Kruskal算法</h3>
+<ol type="1">
+<li>对所有边进行排序</li>
+<li>从权重最小的边开始，依次将边加入到结点集中</li>
+<li>检查是否产生环（并查集），如果有就剔除</li>
+</ol>
+<blockquote>
+<p>给你一个points 数组，表示 2D 平面上的一些点，其中 points[i] = [xi,
+yi] 。</p>
+<p>连接点 [xi, yi] 和点 [xj, yj] 的费用为它们之间的 曼哈顿距离 ：|xi -
+xj| + |yi - yj| ，其中 |val| 表示 val 的绝对值。</p>
+<p>请你返回将所有点连接的最小总费用。只有任意两点之间 有且仅有
+一条简单路径时，才认为所有点都已连接。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Kruskal 最小生成树算法</span></span><br><span class="line"><span class="comment"> * 1584. 连接所有点的最小费用</span></span><br><span class="line"><span class="comment"> * https://leetcode.cn/problems/min-cost-to-connect-all-points/</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="type">int</span>[] parent;</span><br><span class="line"><span class="type">int</span>[] size;</span><br><span class="line"><span class="keyword">public</span> <span class="type">int</span> <span class="title function_">minCostConnectPoints</span><span class="params">(<span class="type">int</span>[][] points)</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">n</span> <span class="operator">=</span> points.length; <span class="comment">// 节点个数</span></span><br><span class="line">    List&lt;<span class="type">int</span>[]&gt; edges = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; n; i ++)&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> i + <span class="number">1</span>; j &lt; n; j++)&#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">cost</span> <span class="operator">=</span> Math.abs(points[i][<span class="number">0</span>] - points[j][<span class="number">0</span>]) +</span><br><span class="line">                               Math.abs(points[i][<span class="number">1</span>] - points[j][<span class="number">1</span>]);</span><br><span class="line">            edges.add(<span class="keyword">new</span> <span class="title class_">int</span>[]&#123;i, j, cost&#125;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    edges.sort(Comparator.comparingInt(a -&gt; a[<span class="number">2</span>])); <span class="comment">// 升序排列</span></span><br><span class="line">    </span><br><span class="line">    parent = <span class="keyword">new</span> <span class="title class_">int</span>[n];</span><br><span class="line">    size = <span class="keyword">new</span> <span class="title class_">int</span>[n];</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; n; i++) &#123;</span><br><span class="line">        parent[i] = i;</span><br><span class="line">        size[i] = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="type">int</span> <span class="variable">sum</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span>[] edge : edges) &#123;</span><br><span class="line">        <span class="keyword">if</span>(union(edge[<span class="number">0</span>], edge[<span class="number">1</span>]))&#123;</span><br><span class="line">            sum += edge[<span class="number">2</span>];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sum;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">boolean</span> <span class="title function_">union</span><span class="params">(<span class="type">int</span> v, <span class="type">int</span> w)</span> &#123;</span><br><span class="line">    <span class="keyword">while</span> (parent[v] != v) &#123;</span><br><span class="line">        parent[v] = parent[parent[v]];</span><br><span class="line">        v = parent[v];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> (parent[w] != w) &#123;</span><br><span class="line">        parent[w] = parent[parent[w]];</span><br><span class="line">        w = parent[w];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (w == v) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>; <span class="comment">// 处在一个连通分量中</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (size[w] &gt; size[v]) &#123;</span><br><span class="line">            parent[v] = w;</span><br><span class="line">            size[w] += size[v];</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            parent[w] = v;</span><br><span class="line">            size[v] += size[w];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="六dijstra算法">六、Dijstra算法</h2>
+<h3 id="框架">1、框架</h3>
+<ol type="1">
+<li>建图：将题目中对应的图模型建立起来（以邻接表的形式）</li>
+<li>封装每个图节点 Node：节点id 和 "代价"(从 start
+节点到当前节点的最值)</li>
+<li>使用一个 cost 数组：cost[i] 记录从 start 节点开始到 i 节点的
+"<strong>代价</strong>" <strong>最值</strong></li>
+<li>使用 优先队列 queue：目的是每次能够取出最小（最大）的节点，加速
+BFS</li>
+<li>从 start 节点开始 BFS</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span>[] dijstra(..args)&#123;</span><br><span class="line">    <span class="comment">// 建图</span></span><br><span class="line">    List&lt;<span class="type">int</span>[]&gt;[] graph = buildGraph();</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// start节点到相应节点的&quot;代价&quot;最值</span></span><br><span class="line">    <span class="type">int</span>[] costTo = <span class="keyword">new</span> <span class="title class_">int</span>[n];</span><br><span class="line">    initialize the array;</span><br><span class="line">    costTo[start] = init_value;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 使用优先级队列，对所有封装起来的图节点按照&quot;cost&quot;排序</span></span><br><span class="line">    Queue&lt;Node&gt; queue = <span class="keyword">new</span> <span class="title class_">PriorityQueue</span>&lt;&gt;();</span><br><span class="line">    queue.offer(<span class="keyword">new</span> <span class="title class_">a</span> start node);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span>(!queue.isEmpty())&#123;</span><br><span class="line">        <span class="type">Node</span> <span class="variable">node</span> <span class="operator">=</span> queue.poll();</span><br><span class="line">        <span class="type">int</span> <span class="variable">id</span> <span class="operator">=</span> node.id;</span><br><span class="line">        <span class="type">int</span> <span class="variable">cost</span> <span class="operator">=</span> node.costFromStart;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span>(cost &gt; costTo[id])&#123; <span class="comment">// 已经有更优的</span></span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span>[] next : graph[id])&#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">nextId</span> <span class="operator">=</span> next[<span class="number">0</span>];</span><br><span class="line">            <span class="comment">// 这个地方可以衍生出很多的变式，对于代价是相加，对于概率是相乘，也有可能是求最大值</span></span><br><span class="line">            <span class="type">int</span> <span class="variable">nextCost</span> <span class="operator">=</span> func(next[<span class="number">1</span>], costTo[id]);</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">if</span>(nextCost &lt; costTo(nextId))&#123;</span><br><span class="line">                <span class="comment">// 更新</span></span><br><span class="line">                costTo[nextId] = nextCost;</span><br><span class="line">                queue.offer(<span class="keyword">new</span> <span class="title class_">this</span> node);</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> costTo;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      
+    <div>
+      <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:24px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+    </div>
+  
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>zhc
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://example.com/2022/10/15/%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B06%EF%BC%88%E5%9B%BE%E8%AE%BA%EF%BC%89/" title="刷题笔记6-图论">http://example.com/2022/10/15/刷题笔记6（图论）/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/leetcode/" rel="tag"># leetcode</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/09/15/%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B02%EF%BC%88%E9%98%9F%E5%88%97%E6%A0%88%EF%BC%89/" rel="prev" title="刷题笔记2-队列/栈">
+      <i class="fa fa-chevron-left"></i> 刷题笔记2-队列/栈
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/10/31/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%E5%BA%94%E7%94%A8%E9%A2%98/" rel="next" title="动态规划应用">
+      动态规划应用 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BE%E7%9A%84%E8%A1%A8%E7%A4%BA"><span class="nav-number">1.</span> <span class="nav-text">1、图的表示</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%82%BB%E6%8E%A5%E8%A1%A8"><span class="nav-number">1.1.</span> <span class="nav-text">1.1、邻接表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%82%BB%E6%8E%A5%E7%9F%A9%E9%98%B5"><span class="nav-number">1.2.</span> <span class="nav-text">1.2、邻接矩阵</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BE%E7%9A%84%E9%81%8D%E5%8E%86"><span class="nav-number">2.</span> <span class="nav-text">2、图的遍历</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%8B%E9%A2%98"><span class="nav-number">3.</span> <span class="nav-text">3、例题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E6%8B%93%E6%89%91%E6%8E%92%E5%BA%8F"><span class="nav-number"></span> <span class="nav-text">二、拓扑排序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BE%E7%9A%84%E7%94%9F%E6%88%90%E4%B8%8E%E9%81%8D%E5%8E%86"><span class="nav-number">1.</span> <span class="nav-text">0、图的生成与遍历</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%AD%98%E5%9C%A8%E7%8E%AF"><span class="nav-number">2.</span> <span class="nav-text">1、判断是否存在环</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8B%93%E6%89%91%E5%BA%8F%E5%88%97"><span class="nav-number">3.</span> <span class="nav-text">2、拓扑序列</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E4%BA%8C%E5%88%86%E5%9B%BE"><span class="nav-number"></span> <span class="nav-text">三、二分图</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A4%E6%96%AD%E4%BA%8C%E5%88%86%E5%9B%BE"><span class="nav-number">1.</span> <span class="nav-text">【判断二分图】</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9Bunion-find-%E7%AE%97%E6%B3%95"><span class="nav-number"></span> <span class="nav-text">四、Union-Find 算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#union-find%E7%9A%84%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3"><span class="nav-number">1.</span> <span class="nav-text">1、union-find的算法思想</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#union-find%E7%AE%97%E6%B3%95%E7%9A%84%E5%BA%94%E7%94%A8"><span class="nav-number">2.</span> <span class="nav-text">2、Union-Find算法的应用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A2%AB%E5%9B%B4%E7%BB%95%E7%9A%84%E5%8C%BA%E5%9F%9F"><span class="nav-number">2.1.</span> <span class="nav-text">2.1、130. 被围绕的区域</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AD%89%E5%BC%8F%E6%96%B9%E7%A8%8B%E7%9A%84%E5%8F%AF%E6%BB%A1%E8%B6%B3%E6%80%A7"><span class="nav-number">2.2.</span> <span class="nav-text">2.2、990. 等式方程的可满足性</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E6%9C%80%E5%B0%8F%E7%94%9F%E6%88%90%E6%A0%91%E7%AE%97%E6%B3%95"><span class="nav-number"></span> <span class="nav-text">五、最小生成树算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#kruskal%E7%AE%97%E6%B3%95"><span class="nav-number">1.</span> <span class="nav-text">Kruskal算法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%ADdijstra%E7%AE%97%E6%B3%95"><span class="nav-number"></span> <span class="nav-text">六、Dijstra算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A1%86%E6%9E%B6"><span class="nav-number">1.</span> <span class="nav-text">1、框架</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="zhc"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">zhc</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">27</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/zhc-njdx" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;zhc-njdx" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://blog.csdn.net/m0_57225567?spm=1000.2115.3001.5343" title="https:&#x2F;&#x2F;blog.csdn.net&#x2F;m0_57225567?spm&#x3D;1000.2115.3001.5343" rel="noopener" target="_blank">CSDN</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2022-10 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhc</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">157k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">2:23</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共56.1k字</span>
+</div>
+
+
+
+    <script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客数<span id="busuanzi_value_site_uv"></span>人</span>
+<!-- 不蒜子计数初始值纠正 -->
+<script>
+$(document).ready(function() {
+
+    var int = setInterval(fixCount, 50);  // 50ms周期检测函数
+    var countOffset = 20000;  // 初始化首次数据
+
+    function fixCount() {            
+       if (document.getElementById("busuanzi_container_site_pv").style.display != "none")
+        {
+            $("#busuanzi_value_site_pv").html(parseInt($("#busuanzi_value_site_pv").html()) + countOffset); 
+            clearInterval(int);
+        }                  
+        if ($("#busuanzi_container_site_pv").css("display") != "none")
+        {
+            $("#busuanzi_value_site_uv").html(parseInt($("#busuanzi_value_site_uv").html()) + countOffset); // 加上初始数据 
+            clearInterval(int); // 停止检测
+        }  
+    }
+       	
+});
+</script> 
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>
